@@ -2,7 +2,5 @@
 history/*
 
 *.o
-!os/*.o
-
 *.bin
 *.iso

@@ -37,7 +37,6 @@ section .text
 	dd MB_BPP
 	
 	extern c_main
-	extern main
 	extern acpi_poweroff
 	
 	global start
@@ -52,7 +51,6 @@ section .text
 		push dword eax
 		
 		call c_main
-		call main
 		call acpi_poweroff
 		
 		mov eax, 1

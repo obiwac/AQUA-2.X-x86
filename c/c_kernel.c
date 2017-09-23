@@ -54,6 +54,8 @@
 #include "descr_tables/idt.h"
 #include "descr_tables/gdt.h"
 
+void main(void);
+
 void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	vga_text_clear_screen();
 	parse_mboot(mb_magic, mb_address);
@@ -209,5 +211,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	printf("PCI: Analysing devices ...\n");
 	pci_analyse();
+	
+	//main();
 	
 }
