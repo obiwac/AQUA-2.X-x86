@@ -5,7 +5,7 @@
 	#include "../types.h"
 	#include "../io/ports.h"
 	
-	#include "../../../platforms/defs.h"
+	#include "../platform/defs.h"
 	
 	#define CMOS_PORT_ADDRESS 0x70
 	#define CMOS_PORT_DATA 0x71

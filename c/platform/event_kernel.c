@@ -1,5 +1,5 @@
 
-#include "../../../platforms/defs.h"
+#include "defs.h"
 #include "../drivers/irq/mouse.h"
 #include "../drivers/irq/keyboard.h"
 #include "../drivers/irq/pit.h"

@@ -1,6 +1,7 @@
 
 import os
 
+extern = bool(os.system("cp ../platforms/defs.h os/defs.h"))
 os.system("find obj/ -name \"*.*\" -type f -delete")
 
 objs = ""
@@ -31,12 +32,13 @@ for root, subdirs, files in os.walk("c"):
 				objs = objs + obj + ' '
 
 obj = "obj/main.o"
-os.system("i686-elf-gcc %s -m32 -c -ffreestanding -c -o %s" % ("../main.c", obj)) #-O1
-objs = objs + obj + ' '
+objs = objs + obj + " obj/res.o "
 
-objs = objs + "obj/res.o "
+if not extern:
+	os.system("i686-elf-gcc %s -m32 -c -ffreestanding -c -o %s" % ("../main.c", obj)) #-O1
+	os.system("cp ../res/build/res.o obj/res.o")
 
-if os.system("cp ../res/build/res.o obj/res.o"):
+else:
 	os.system("cp os/res.o obj/res.o")
 	os.system("cp os/main.o obj/main.o")
 
