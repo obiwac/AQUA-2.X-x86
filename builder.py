@@ -35,7 +35,10 @@ os.system("i686-elf-gcc %s -m32 -c -ffreestanding -c -o %s" % ("../main.c", obj)
 objs = objs + obj + ' '
 
 objs = objs + "obj/res.o "
-os.system("cp ../res/build/res.o obj/res.o")
+
+if os.system("cp ../res/build/res.o obj/res.o"):
+	os.system("cp os/res.o obj/res.o")
+	os.system("cp os/main.o obj/main.o")
 
 os.system("ld -m elf_i386 -T build/linker.ld -o aqua/boot/kernel.bin %s" % (objs))
 os.system("strip aqua/boot/kernel.bin")
