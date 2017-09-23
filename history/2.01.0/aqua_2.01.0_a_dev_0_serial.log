@@ -1,0 +1,17 @@
+GRUB: Parsing multiboot 2 information structure ...
+GRUB: flags = 0x120
+	GRUB: mem_lower = 117KB, mem_upper = 117KB
+	GRUB: boot_device = 0x120
+	GRUB: cmdline = 
+	GRUB: multiboot_elf_sec: num = 100ÿÿÿÿà, size = 0x120ÿÿÿÿà, addr = 0x120ÿÿÿÿà, shndx = 0x120ÿÿÿÿà	GRUB: mmap_addr = 0x120, mmap_length = 0x120
+		size = 0x120, base_addr = 0x120120, length = 0x120120, type = 0x120
+		size = 0x120, base_addr = 0x120120, length = 0x120120, type = 0x120
+		size = 0x120, base_addr = 0x120120, length = 0x120120, type = 0x120
+		size = 0x120, base_addr = 0x120120, length = 0x120120, type = 0x120
+		size = 0x120, base_addr = 0x120120, length = 0x120120, type = 0x120
+		size = 0x120, base_addr = 0x120120, length = 0x120120, type = 0x120
+Graphics: width = 100ÿ, height = 100ÿ, bpp = 100ÿ, addr = 0x120ÿ, type = text
+GDT: Loading the gdt ...
+Interrupts: Installing isr ...
+Memory: Initializing heap ...
+Serial: Initializing serial ...

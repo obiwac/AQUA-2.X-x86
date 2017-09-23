@@ -1,0 +1,212 @@
+
+#include "vga.h"
+
+static uint8_t vga_mode_3h[] = { // 80x25x16 (text)
+	0x67,
+	
+	0x03, 0x01, 0x0F, 0x00, 0x0E,
+	
+	0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F,
+	0x00, 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x9C, 0x0E, 0x8F, 0x28,	0x40, 0x96, 0xB9, 0xA3,
+	0xFF,
+	
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0F,
+	0xFF,
+	
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+	0x41, 0x00, 0x0F, 0x00,	0x00,
+	
+};
+
+static uint8_t vga_mode_12h[] = { // 640x480x4
+	0xE3,
+	
+	0x03, 0x01, 0x0F, 0x00, 0x0E,
+	
+	0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F,
+	0x00, 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x9C, 0x0E, 0x8F, 0x28,	0x40, 0x96, 0xB9, 0xA3,
+	0xFF,
+	
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0F,
+	0xFF,
+	
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+	0x41, 0x00, 0x0F, 0x00,	0x00,
+	
+};
+
+static uint8_t vga_mode_13h[] = { // 320x200x8
+	0x63,
+	
+	0x03, 0x01, 0x0F, 0x00, 0x0E,
+	
+	0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F,
+	0x00, 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x9C, 0x0E, 0x8F, 0x28,	0x40, 0x96, 0xB9, 0xA3,
+	0xFF,
+	
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0F,
+	0xFF,
+	
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+	0x41, 0x00, 0x0F, 0x00,	0x00,
+	
+};
+
+static uint8_t vga_mode_x[] = { // 320x240x8
+	0xE3,
+	
+	0x03, 0x01, 0x0F, 0x00, 0x0E,
+	
+	0x5F, 0x4F, 0x50, 0x82, 0x54, 0x80, 0xBF, 0x1F,
+	0x00, 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x9C, 0x0E, 0x8F, 0x28,	0x40, 0x96, 0xB9, 0xA3,
+	0xFF,
+	
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x05, 0x0F,
+	0xFF,
+	
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+	0x41, 0x00, 0x0F, 0x00,	0x00,
+	
+};
+
+static uint16_t vga_misc_port = 0x3C2;
+
+static uint16_t vga_crtc_index_port = 0x3D4;
+static uint16_t vga_crtc_data_port = 0x3D5;
+
+static uint16_t vga_sequencer_index_port = 0x3C4;
+static uint16_t vga_sequencer_data_port = 0x3C5;
+
+static uint16_t vga_graphics_controller_index_port = 0x3CE;
+static uint16_t vga_graphics_controller_data_port = 0x3CF;
+
+static uint16_t vga_attribute_controller_index_port = 0x3C0;
+static uint16_t vga_attribute_controller_read_port = 0x3C1;
+static uint16_t vga_attribute_controller_write_port = 0x3C0;
+static uint16_t vga_attribute_controller_reset_port = 0x3DA;
+
+static uint32_t vga_mode_width;
+static uint32_t vga_mode_height;
+static uint8_t vga_mode_bpp;
+
+#if VGA_MAX_BPP == 16
+	static uint16_t* vga_framebuffer_segment;
+#else
+	static uint8_t* vga_framebuffer_segment;
+#endif
+
+char* vga_get_graphics_device_name(void) {
+	return "Video Electronics Standard Association (VESA) compatible graphics card.";
+	
+}
+
+void vga_write_regs(uint8_t* regs) {
+	outportb(vga_misc_port, *(regs++));
+	
+	int i;
+	for (i = 0; i < 5; i++) {
+		outportb(vga_sequencer_index_port, i);
+		outportb(vga_sequencer_data_port, *(regs++));
+		
+	}
+	
+	outportb(vga_crtc_index_port, 0x03);
+	outportb(vga_crtc_data_port, inportb(vga_crtc_index_port) | 0x80);
+	outportb(vga_crtc_index_port, 0x11);
+	outportb(vga_crtc_data_port, inportb(vga_crtc_index_port) | ~0x80);
+	
+	regs[0x03] |= 0x80;
+	regs[0x11] |= ~0x80;
+	
+	for (i = 0; i < 25; i++) {
+		outportb(vga_crtc_index_port, i);
+		outportb(vga_crtc_data_port, *(regs++));
+		
+	}
+	
+	for (i = 0; i < 9; i++) {
+		outportb(vga_graphics_controller_index_port, i);
+		outportb(vga_graphics_controller_data_port, *(regs++));
+		
+	}
+	
+	for (i = 0; i < 21; i++) {
+		inportb(vga_attribute_controller_reset_port);
+		outportb(vga_attribute_controller_index_port, i);
+		outportb(vga_attribute_controller_write_port, *(regs++));
+		
+	}
+	
+	inportb(vga_attribute_controller_reset_port);
+	outportb(vga_attribute_controller_index_port, 0x20);
+	
+}
+
+unsigned char vga_supports_mode(uint32_t width, uint32_t height, uint8_t bpp) {
+	return \
+		(width == 320 && height == 200 && bpp == 8) || \
+		(width == 320 && height == 240 && bpp == 8) || \
+		(width == 640 && height == 480 && bpp == 4) || \
+		(width == 80 && height == 25 && bpp == 16);
+	
+}
+
+uint8_t* vga_get_framebuffer_segment(void) {
+	outportb(vga_graphics_controller_index_port, 0x06);
+	
+	switch (inportb(vga_graphics_controller_data_port) & (3 << 2)) {
+		case 0 << 2: return (uint8_t*) 0x00000;
+		case 1 << 2: return (uint8_t*) 0xA0000;
+		case 2 << 2: return (uint8_t*) 0xB0000;
+		case 3 << 2:
+		default: return (uint8_t*) 0xB8000;
+		
+	}
+	
+}
+
+uint8_t vga_set_mode(uint32_t width, uint32_t height, uint8_t bpp) {
+	if (!vga_supports_mode(width, height, bpp)) {
+		return 0;
+		
+	}
+	
+	if (width == 320 && height == 200 && bpp == 8) vga_write_regs(vga_mode_13h);
+	else if (width == 320 && height == 240 && bpp == 8) vga_write_regs(vga_mode_x);
+	else if (width == 640 && height == 480 && bpp == 4) vga_write_regs(vga_mode_12h);
+	else if (width == 80 && height == 25 && bpp == 16) vga_write_regs(vga_mode_3h);
+	
+	#if VGA_MAX_BPP == 16
+		vga_framebuffer_segment = (uint16_t*) vga_get_framebuffer_segment();
+	#else
+		vga_framebuffer_segment = (uint8_t*) vga_get_framebuffer_segment();
+	#endif
+	
+	vga_mode_width = width;
+	vga_mode_height = height;
+	vga_mode_bpp = bpp;
+	
+	return 1;
+	
+}
+
+void vga_put_pixel(uint32_t x, uint32_t y, uint16_t colour) {
+	#if VGA_MAX_BPP == 16
+		uint16_t* address = vga_framebuffer_segment + vga_mode_width * y + x;
+		*address = colour;
+		
+	#else
+		uint8_t* address = vga_framebuffer_segment + vga_mode_width * y + x;
+		*address = (uint8_t) colour;
+		
+	#endif
+	
+}
