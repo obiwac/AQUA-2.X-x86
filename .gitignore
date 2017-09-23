@@ -1,4 +1,6 @@
 
+history/*
+
 *.o
 !os/*.o
 
