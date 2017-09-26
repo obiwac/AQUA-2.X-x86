@@ -3,4 +3,7 @@
 *.bin
 *.iso
 
+bin/
+aqua/
+
 !.git*
