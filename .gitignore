@@ -1,6 +1,6 @@
-
-history/*
-
+.*
 *.o
 *.bin
 *.iso
+
+!.git*
