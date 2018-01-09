@@ -1,16 +1,34 @@
+
 # AQUA-2.X-x86
 This is the repository for the AQUA 2.X x86 kernel
 
-# How to run (linux)
-
+# How to run (Linux)
 First, download this repository with
-`git clone https://github.com/obiwac/AQUA-2.X-x86`
-`cd AQUA-2.X-x86`
+
+```bash
+$ git clone https://github.com/obiwac/AQUA-2.X-x86
+$ cd AQUA-2.X-x86
+```
 
 Then, build it with
-`make`
 
-For this step, you will need a gcc cross compiler setup for i686-elf. See http://wiki.osdev.org/GCC_Cross-Compiler for instructions on how to set one up. If not already done,
-`export PATH="/home/<username>/opt/cross/bin:$PATH"`
+```bash
+$ make
+```
 
-Then you can setup your Virtual Box vm or what not with the aqua.iso in aqua/.
+This will build it with an `i686-elf` cross compiler if you have one, but will instead compile with `gcc -m32` if it doesn't detect it.
+Then you can setup your Virtual Box VM or what not with the aqua.iso in aqua/.
+
+# Minimum / recommended Virtual Box VM specs
+
+| Specification  | Minimum       | Recommended    |
+| -------------- | -------------:| --------------:|
+| RAM            | 512 MB        | 1024 MB        |
+| VRAM           | 9 MB          | 12 MB          |
+| Virtualization | VT-x / AMD-v  | VT-x / AMD-v   |
+| Storage        | 2 GB          | 2 GB           |
+| Audio          | ICH AC97      | Intel HD Audio |
+| Networking     | Intel 8254x   | Intel 8254x    |
+
+**NOTE** the "minimum" specs are not necessarily the *bare* minimum but are the minimum you will need if you want to be future-proof.
+Some of these recommended features are not even partially or fully implemented yet.
