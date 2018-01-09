@@ -1,5 +1,5 @@
 *.o
 *.py
 
-.history/
-.logs/
+.history/*
+.logs/*

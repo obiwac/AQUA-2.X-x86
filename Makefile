@@ -26,7 +26,7 @@ $(ISO): $(KERNEL)
 
 $(KERNEL): $(KERNEL_OBJ)
 	@mkdir -p $(dir $@)
-	@$(CC) $(LDFLAGS) src/de/main -o $@ $^
+	@$(CC) $(LDFLAGS) src/de/main src/de/res -o $@ $^
 
 %.c.o: %.c
 	@$(CC) $(CFLAGS) -c -o $@ $<
