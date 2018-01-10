@@ -28,7 +28,7 @@ Then you can setup your Virtual Box VM or what not with the aqua.iso in aqua/.
 | Virtualization | VT-x / AMD-v  | VT-x / AMD-v   |
 | Storage        | 2 GB          | 2 GB           |
 | Audio          | ICH AC97      | Intel HD Audio |
-| Networking     | Intel 8254x   | Intel 8254x    |
+| Networking     | RTL8139       | Intel i217     |
 
 **NOTE** the "minimum" specs are not necessarily the *bare* minimum but are the minimum you will need if you want to be future-proof.
 Some of these recommended features are not even partially or fully implemented yet.
