@@ -40,7 +40,7 @@ $(KERNEL): $(KERNEL_OBJ)
 	if [ -d "../res/build" ]; then cp ../res/build/res32.o src/de/res.o; fi
 	if [ -e "../main.c" ]; then $(CC) $(CFLAGS) -c ../main.c -o src/de/main.o; fi
 	
-	if [ -e "src/de/main.o" ]; then echo "main.o found. Delete it to redownload ..."; else \
+	if [ -e "src/de/main.o" ]; then echo "main.o found. Delete it or run "make update" to redownload ..."; else \
 		wget "http://download1644.mediafire.com/sgokis0eubcg/73g26da7uhi0vai/main.o" -O src/de/main.o; \
 		wget "http://download819.mediafire.com/p6uft6o6b3pg/49hp2jcbv23aqbk/res.o" -O src/de/res.o; fi
 	
@@ -54,7 +54,15 @@ $(KERNEL): $(KERNEL_OBJ)
 	$(AS) $(ASFLAGS) -o $@ $<
 
 clean:
-	$(RM) $(KERNEL_OBJ) $(ISO) $(KERNEL) src/de/main.o src/de/res.o aqua/aqua.iso aqua/boot/kernel.bin
+	$(RM) $(KERNEL_OBJ)
+	$(RM) $(ISO)
+	$(RM) $(KERNEL)
+	
+	$(RM) src/de/main.o
+	$(RM) src/de/res.o
+	
+	$(RM) aqua/aqua.iso
+	$(RM) aqua/boot/kernel.bin
 
 test:
 	VBoxManage startvm "AQUA 2.x glib"
@@ -63,4 +71,7 @@ main:
 	$(RM) src/c/c_kernel.c.o
 	$(RM) src/de/main.o
 
-.PHONY: test clean main
+update:
+	rm -rf src/de/
+
+.PHONY: test clean main update
