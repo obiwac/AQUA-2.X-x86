@@ -1,5 +1,9 @@
 *.o
+*.bin
+*.iso
 *.py
 
-.history/*
-.logs/*
+serial.txt
+commit.sh
+
+bin/
