@@ -27,6 +27,11 @@ $(ISO): $(KERNEL)
 	cp $(ISO) aqua/aqua.iso
 
 $(KERNEL): $(KERNEL_OBJ)
+	$(AS) $(ASFLAGS) -o src/asm/kernel.asm.o src/asm/kernel.asm
+	
+	mkdir -p src/de/
+	mkdir -p bin/
+	
 	if [ -d "../res/build" ]; then cp ../res/build/res32.o src/de/res.o; fi
 	if [ -e "../main.c" ]; then $(CC) $(CFLAGS) -c ../main.c -o src/de/main.o; fi
 	
@@ -49,4 +54,8 @@ clean:
 test:
 	VBoxManage startvm "AQUA 2.x glib"
 
-.PHONY: test clean
+main:
+	rm src/c/c_kernel.c.o
+	rm src/de/main.o
+
+.PHONY: test clean main
