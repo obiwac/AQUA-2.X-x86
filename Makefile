@@ -23,8 +23,13 @@ $(ISO): $(KERNEL)
 	cp $(KERNEL) aqua/boot/kernel.bin
 	cp build/grub.cfg aqua/boot/grub/grub.cfg
 	
+	$(RM) aqua/aqua.iso
+	
 	grub-mkrescue -o $@ aqua
 	cp $(ISO) aqua/aqua.iso
+	
+	$(RM) bin/kernel.bin
+	$(RM) bin/aqua.iso
 
 $(KERNEL): $(KERNEL_OBJ)
 	$(AS) $(ASFLAGS) -o src/asm/kernel.asm.o src/asm/kernel.asm
@@ -55,7 +60,7 @@ test:
 	VBoxManage startvm "AQUA 2.x glib"
 
 main:
-	rm src/c/c_kernel.c.o
-	rm src/de/main.o
+	$(RM) src/c/c_kernel.c.o
+	$(RM) src/de/main.o
 
 .PHONY: test clean main

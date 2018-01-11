@@ -1,6 +1,7 @@
 
 #include "../specs/video.h"
 #include "../drivers/irq/mouse.h"
+#include "../drivers/power/acpi.h"
 
 #include "memory.h"
 #include "cursor.h"
@@ -193,5 +194,6 @@ void glib_update(void) { /// TODO avoid flickering & just fix this huge mess
 
 void glib_quit(void) {
 	mfree(glib_screen_surface, glib_screen_surface->pitch * glib_screen_surface->h);
+	acpi_poweroff();
 	
 }
