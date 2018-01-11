@@ -286,6 +286,9 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("DE: Entering ...\n");
 	main();
 	
+	printf("ACPI: Powering off system ...\n");
+	acpi_poweroff();
+	
 	for (;;);
 	
 }
