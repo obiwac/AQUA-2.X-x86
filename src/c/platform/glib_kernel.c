@@ -70,24 +70,59 @@ int glib_get_pitch(void) {
 	
 }
 
-void glib_update(void) { /// TODO avoid flickering & just fix this huge mess
+void glib_update(void) {
 	unsigned char* uc_pixels = (unsigned char*) glib_screen_surface->pixels;
 	int j = 0;
 	
-	unsigned char wcpc = 3; // apparently i dont have to do video_cpc?
 	unsigned char cpc = 4;
+	
+	int i = glib_screen_surface->pitch * mouse_y;
+	
+	unsigned char r;
+	unsigned char a;
+	unsigned int offset;
+	
+	short _r;
+	short _g;
+	short _b;
+	
+	int _x;
+	int _y;
+	
+	for (_y = 0; _y < mouse_cursor_height; _y++) {
+		for (_x = mouse_x; _x < mouse_cursor_width + mouse_x; _x++) {
+			offset = i + _x * cpc;
+			
+			r = mouse_cursor[j] & 0xFF;
+			a = mouse_cursor[j + 3];
+			
+			_r = uc_pixels[offset] + (r - uc_pixels[offset]) * a / 0xFF;
+			_g = uc_pixels[offset + 1] + (r - uc_pixels[offset + 1]) * a / 0xFF;
+			_b = uc_pixels[offset + 2] + (r - uc_pixels[offset + 2]) * a / 0xFF;
+			
+			_r = _r > 255 ? 255 : _r;
+			_g = _g > 255 ? 255 : _g;
+			_b = _b > 255 ? 255 : _b;
+			
+			j += 4;
+			
+			uc_pixels[offset] = (unsigned char) _r;
+			uc_pixels[offset + 1] = (unsigned char) _g;
+			uc_pixels[offset + 2] = (unsigned char) _b;
+			
+		}
+		
+		i += glib_screen_surface->pitch;
+		
+	}
+	
+	unsigned char wcpc = 3;
+	
+	j = 0;
 	
 	int x = 0;
 	int y = 0;
 	
-	//short r;
-	//short g;
-	//short b;
-	
-	//unsigned int i_min = (mouse_y * glib_screen_width + mouse_x) * wcpc;
-	//unsigned int i_max = (mouse_y * glib_screen_width + mouse_x) * wcpc + 1;
-	
-	int i;
 	for (i = 0; i < glib_screen_surface->pitch * glib_screen_height; i += wcpc) {
 		glib_screen[i] = uc_pixels[j];
 		glib_screen[i + 1] = uc_pixels[j + 1];
@@ -96,99 +131,6 @@ void glib_update(void) { /// TODO avoid flickering & just fix this huge mess
 		j += wcpc;
 		
 	}
-	
-	x = mouse_x;
-	int w = glib_screen_surface->pitch * mouse_y;
-	int z = 0;
-	
-	/*unsigned char r; 
-	unsigned char g;
-	unsigned char b;
-	
-	short _r;
-	short _g;
-	short _b;
-	*/
-	int _x;
-	int _y;
-	
-	for (_y = 0; _y < 4; _y++) {
-		for (_x = x; _x < 4 + x; _x++) {
-			glib_screen[w + _x * cpc] = 0xFF;
-			glib_screen[w + _x * cpc + 1] = 0xFF;
-			glib_screen[w + _x * cpc + 2] = 0xFF;
-			
-		}
-		
-		w += glib_screen_surface->pitch;
-		
-	}
-	
-	/*
-	for (i = 0; i < 16 * 16 * 4; i += 4) {
-		x = mouse_x;
-		
-		
-		
-		r = glib_screen[w + x * cpc] + (mouse_cursor[z] - glib_screen[w + x * cpc]) * mouse_cursor[z + 3] / 0xFF;
-		g = glib_screen[w + x * cpc + 1] + (mouse_cursor[z + 1] - glib_screen[w + x * cpc + 1]) * mouse_cursor[z + 3] / 0xFF;
-		b = glib_screen[w + x * cpc + 2] + (mouse_cursor[z + 2] - glib_screen[w + x * cpc + 2]) * mouse_cursor[z + 3] / 0xFF;
-		
-		if (r > 255) r = 255;
-		if (g > 255) g = 255;
-		if (b > 255) b = 255;
-		
-		z += wcpc;
-		w++;
-		
-		glib_screen[w + x * cpc] = (unsigned char) r;
-		glib_screen[w + x * cpc + 1] = (unsigned char) g;
-		glib_screen[w + x * cpc + 2] = (unsigned char) b;
-		
-	}
-	
-	
-	
-	
-	int w = glib_screen_surface->w * wcpc * mouse_y;
-	int z = 0;
-	
-	//int i;
-	for (i = 0; i < glib_screen_surface->pitch * glib_screen_height; i += wcpc) {
-		y = i / glib_screen_surface->pitch;
-		x = i % glib_screen_surface->pitch / wcpc;
-		
-		if (y >= mouse_y && y <= mouse_y + 16 && x >= mouse_x && x <= mouse_x + 16) {
-			if (++x > 16) y++;
-			
-			x = mouse_x;
-			
-			r = glib_screen[w + x * cpc] + (mouse_cursor[z] - glib_screen[w + x * cpc]) * mouse_cursor[z + 3] / 0xFF;
-			g = glib_screen[w + x * cpc + 1] + (mouse_cursor[z + 1] - glib_screen[w + x * cpc + 1]) * mouse_cursor[z + 3] / 0xFF;
-			b = glib_screen[w + x * cpc + 2] + (mouse_cursor[z + 2] - glib_screen[w + x * cpc + 2]) * mouse_cursor[z + 3] / 0xFF;
-			
-			if (r > 255) r = 255;
-			if (g > 255) g = 255;
-			if (b > 255) b = 255;
-			
-			z += wcpc;
-			w++;
-			x = mouse_x;
-			
-			glib_screen[i] = (unsigned char) r;
-			glib_screen[i + 1] = (unsigned char) g;
-			glib_screen[i + 2] = (unsigned char) b;
-			
-		} else {
-			glib_screen[i] = uc_pixels[j];
-			glib_screen[i + 1] = uc_pixels[j + 1];
-			glib_screen[i + 2] = uc_pixels[j + 2];
-			
-		}
-		
-		j += 3;
-		
-	}*/
 	
 }
 
