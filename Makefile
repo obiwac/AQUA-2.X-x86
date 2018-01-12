@@ -86,6 +86,28 @@ download:
 	sudo apt install nasm
 
 vm_setup:
+	if [ -e "aqua/aqua.iso" ]; then $(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...); fi
+	
+	VBoxManage createvm --name "AQUA OS" --register
+	VBoxManage modifyvm "AQUA OS" --memory 1024
+	
+	VBoxManage createhd --filename "AQUA Harddrive" --size 2048
+	VBoxManage storagectl "AQUA OS" --add ide --name "IDE"
+	
+	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive
+	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 0 --device 0 --medium "AQUA Harddrive.vdi" --type hdd
+	
+	VBoxManage modifyvm "AQUA OS" --audioout on
+	VBoxManage modifyvm "AQUA OS" --audiocontroller hda
+	
+	VBoxManage modifyvm "AQUA OS" --nic1 nat
+	VBoxManage modifyvm "AQUA OS" --nictype1 82540EM
+	VBoxManage modifyvm "AQUA OS" --cableconnected1 on
+	
+	VBoxManage modifyvm "AQUA OS" --uart1 4 0x3F8
+	VBoxManage modifyvm "AQUA OS" --uartmode1 file serial.txt
+
+cross_compiler:
 	echo "TODO"
 
-.PHONY: test clean main update download vm_setup
+.PHONY: test clean main update download vm_setup cross_compiler
