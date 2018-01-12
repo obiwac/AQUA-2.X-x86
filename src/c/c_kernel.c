@@ -65,30 +65,37 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("Awaiting kernel boot keypress ...\n");
 	
 	int i;
-	for (i = 0; i < 8182; i++) {
-		if ((inportb(0x64) & 1) && inportb(0x60) == 49) {
-			printf_warn("Entering kernel shell instead of AQUA DE ...\n");
-			BOOT_AQUA = 0;
-			break;
-			
-		}
-		
-		if ((inportb(0x64) & 1) && inportb(0x60) == 48) {
-			printf_warn("Forcing serial output ...\n");
-			print_force_serial = 1;
-			break;
-			
-		}
-		
-		if ((inportb(0x64) & 1) && inportb(0x60) == 47) {
-			printf_warn("Forcing ACPI to poweroff ...\n");
-			
-			printf("ACPI: Initializing ... \n");
-			printf_minor("\tACPI: %d\n", acpi_init());
-			
-			acpi_poweroff();
-			
-			break;
+	for (i = 0; i < 0xFFFF; i++) {
+		if (inportb(0x64) & 1) {
+			switch (inportb(0x60)) {
+				case 49: {
+					printf_warn("Entering kernel shell instead of AQUA DE ...\n");
+					BOOT_AQUA = 0;
+					
+					break;
+					
+				} case 48: {
+					printf_warn("Forcing serial output ...\n");
+					print_force_serial = 1;
+					
+					break;
+					
+				} case 47: {
+					print_force_serial = 1;
+					printf_warn("Forcing ACPI to poweroff ...\n");
+					
+					printf("ACPI: Initializing ... \n");
+					printf_minor("\tACPI: %d\n", acpi_init());
+					
+					acpi_poweroff();
+					break;
+					
+				} default: {
+					break;
+					
+				}
+				
+			}
 			
 		}
 		
