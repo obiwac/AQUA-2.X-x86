@@ -1,6 +1,7 @@
 
 APT := $(shell command -v apt 2> /dev/null);
 CROSS_CC := $(shell command -v i686-elf-gcc 2> /dev/null)
+AQUA_ISO := $(shell ls aqua/aqua.iso 2> /dev/null)
 
 CC := gcc -m32
 AS := nasm
@@ -88,25 +89,30 @@ ifdef $(APT)
 endif
 
 vm-setup:
-	if [ -e "aqua/aqua.iso" ]; then $(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...); fi
+ifdef $(AQUA_ISO)
+	$(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...)
+endif
 	
+	sh scripts/rm_vm.sh
+	mkdir -p virtualbox/
+	
+	-VBoxManage unregistervm "AQUA OS" --delete
 	VBoxManage createvm --name "AQUA OS" --register
 	VBoxManage modifyvm "AQUA OS" --memory 1024
 	
-	VBoxManage createhd --filename "AQUA Harddrive" --size 2048
+	VBoxManage createhd --filename "virtualbox/AQUA Harddrive" --size 2048
 	VBoxManage storagectl "AQUA OS" --add ide --name "IDE"
 	
 	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive
-	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 0 --device 0 --medium "AQUA Harddrive.vdi" --type hdd
+	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
 	
-	VBoxManage modifyvm "AQUA OS" --audioout on
 	VBoxManage modifyvm "AQUA OS" --audiocontroller hda
 	
 	VBoxManage modifyvm "AQUA OS" --nic1 nat
 	VBoxManage modifyvm "AQUA OS" --nictype1 82540EM
 	VBoxManage modifyvm "AQUA OS" --cableconnected1 on
 	
-	VBoxManage modifyvm "AQUA OS" --uart1 4 0x3F8
+	VBoxManage modifyvm "AQUA OS" --uart1 0x3F8 4
 	VBoxManage modifyvm "AQUA OS" --uartmode1 file serial.txt
 
 cross-compiler:

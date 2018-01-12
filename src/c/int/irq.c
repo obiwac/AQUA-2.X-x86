@@ -9,7 +9,7 @@ void* irq_routines[16] = {
 };
 
 void irq_init(void) {
-	clear_interrupts();
+	asm("cli");
 	irq_remap();
 	
 	set_idt_gate(32, (uint32_t) irq0);
