@@ -75,7 +75,17 @@ update:
 	$(RM) src/de/main.o
 	$(RM) src/de/res.o
 
+download:
+	sudo apt install virtualbox
+	
+	sudo apt install xorriso
+	sudo apt install grub
+	
+	sudo apt install make
+	sudo apt install gcc
+	sudo apt install nasm
+
 vm_setup:
 	echo "TODO"
 
-.PHONY: test clean main update vm_setup
+.PHONY: test clean main update download vm_setup
