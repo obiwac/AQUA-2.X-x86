@@ -1,5 +1,6 @@
 
 #include "irq.h"
+#include "../common/extern.h"
 
 void* irq_routines[16] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
@@ -8,7 +9,7 @@ void* irq_routines[16] = {
 };
 
 void irq_init(void) {
-	asm("cli");
+	clear_interrupts();
 	irq_remap();
 	
 	set_idt_gate(32, (uint32_t) irq0);

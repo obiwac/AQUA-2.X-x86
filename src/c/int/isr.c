@@ -1,4 +1,6 @@
+
 #include "isr.h"
+#include "../common/extern.h"
 
 void isr_install(void) {
 	set_idt_gate(0, (uint32_t) isr0);
@@ -40,194 +42,194 @@ void isr_install(void) {
 
 void isr0(void) {
 	printf("%s\n", exception_messages[0]);
-	asm("hlt");
+	hang();
 	
 		
 }
 
 void isr1(void) {
 	printf("%s\n", exception_messages[1]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr2(void) {
 	printf("%s\n", exception_messages[2]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr3(void) {
 	printf("%s\n", exception_messages[3]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr4(void) {
 	printf("%s\n", exception_messages[4]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr5(void) {
 	printf("%s\n", exception_messages[5]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr6(void) {
 	printf("%s\n", exception_messages[6]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr7(void) {
 	printf("%s\n", exception_messages[7]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr8(void) {
 	printf("%s\n", exception_messages[8]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr9(void) {
 	printf("%s\n", exception_messages[9]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr10(void) {
 	printf("%s\n", exception_messages[10]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr11(void) {
 	printf("%s\n", exception_messages[11]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr12(void) {
 	printf("%s\n", exception_messages[12]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr13(void) {
 	printf("%s\n", exception_messages[13]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr14(void) {
 	printf("%s\n", exception_messages[14]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr15(void) {
 	printf("%s\n", exception_messages[15]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr16(void) {
 	printf("%s\n", exception_messages[16]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr17(void) {
 	printf("%s\n", exception_messages[17]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr18(void) {
 	printf("%s\n", exception_messages[18]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr19(void) {
 	printf("%s\n", exception_messages[19]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr20(void) {
 	printf("%s\n", exception_messages[20]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr21(void) {
 	printf("%s\n", exception_messages[21]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr22(void) {
 	printf("%s\n", exception_messages[22]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr23(void) {
 	printf("%s\n", exception_messages[23]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr24(void) {
 	printf("%s\n", exception_messages[24]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr25(void) {
 	printf("%s\n", exception_messages[25]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr26(void) {
 	printf("%s\n", exception_messages[26]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr27(void) {
 	printf("%s\n", exception_messages[27]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr28(void) {
 	printf("%s\n", exception_messages[28]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr29(void) {
 	printf("%s\n", exception_messages[29]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr30(void) {
 	printf("%s\n", exception_messages[30]);
-	asm("hlt");
+	hang();
 	
 }
 
 void isr31(void) {
 	printf("%s\n", exception_messages[31]);
-	asm("hlt");
+	hang();
 	
 }
 
