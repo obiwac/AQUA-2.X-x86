@@ -1,10 +1,15 @@
 *.o
+*.py
+
 *.bin
 *.iso
-*.py
+
+*.vdi
+*.log
 
 serial.txt
 commit.sh
 
 bin/
 cross_compiler/
+virtualbox/
