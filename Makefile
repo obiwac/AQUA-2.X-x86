@@ -75,4 +75,7 @@ update:
 	$(RM) src/de/main.o
 	$(RM) src/de/res.o
 
-.PHONY: test clean main update
+vm_setup:
+	echo "TODO"
+
+.PHONY: test clean main update vm_setup

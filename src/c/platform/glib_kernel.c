@@ -10,6 +10,7 @@ typedef struct {
 	int w;
 	int h;
 	int pitch;
+	int max_offset; // internal
 	
 	void* pixels;
 	
@@ -28,6 +29,7 @@ void glib_init(int width, int height) {
 	glib_screen_surface->w = video_width;
 	glib_screen_surface->h = video_height;
 	glib_screen_surface->pitch = video_width * video_cpc;
+	glib_screen_surface->max_offset = glib_screen_surface->pitch * glib_screen_surface->h - video_cpc;
 	
 	glib_screen_surface->pixels = (unsigned char*) malloc(video_width * video_height * 4);
 	glib_screen = (unsigned char*) video_addr;
@@ -70,9 +72,14 @@ int glib_get_pitch(void) {
 	
 }
 
+static unsigned char cursor_temp[MOUSE_CURSOR_LENGTH * 4];
+static unsigned int cursor_temp_offsets[MOUSE_CURSOR_LENGTH];
+
 void glib_update(void) {
 	unsigned char* uc_pixels = (unsigned char*) glib_screen_surface->pixels;
 	int j = 0;
+	int k = 0;
+	int l = 0;
 	
 	unsigned char cpc = 4;
 	
@@ -80,11 +87,16 @@ void glib_update(void) {
 	
 	unsigned char r;
 	unsigned char a;
+	
 	unsigned int offset;
+	int base_offset = -1;
 	
 	short _r;
 	short _g;
 	short _b;
+	
+	mouse_x++;
+	mouse_y++;
 	
 	int _x;
 	int _y;
@@ -92,6 +104,7 @@ void glib_update(void) {
 	for (_y = 0; _y < mouse_cursor_height; _y++) {
 		for (_x = mouse_x; _x < mouse_cursor_width + mouse_x; _x++) {
 			offset = i + _x * cpc;
+			if (offset > glib_screen_surface->max_offset) break;
 			
 			r = mouse_cursor[j] & 0xFF;
 			a = mouse_cursor[j + 3];
@@ -105,6 +118,11 @@ void glib_update(void) {
 			_b = _b > 255 ? 255 : _b;
 			
 			j += 4;
+			cursor_temp_offsets[k++] = offset;
+			
+			cursor_temp[l++] = uc_pixels[offset];
+			cursor_temp[l++] = uc_pixels[offset + 1];
+			cursor_temp[l++] = uc_pixels[offset + 2];
 			
 			uc_pixels[offset] = (unsigned char) _r;
 			uc_pixels[offset + 1] = (unsigned char) _g;
@@ -116,8 +134,10 @@ void glib_update(void) {
 		
 	}
 	
-	unsigned char wcpc = 3;
+	mouse_x--;
+	mouse_y--;
 	
+	unsigned char wcpc = 3;
 	j = 0;
 	
 	int x = 0;
@@ -129,6 +149,18 @@ void glib_update(void) {
 		glib_screen[i + 2] = uc_pixels[j + 2];
 		
 		j += wcpc;
+		
+	}
+	
+	l = 0;
+	for (i = 0; i < MOUSE_CURSOR_LENGTH / 4; i++) {
+		offset = cursor_temp_offsets[i];
+		
+		if (offset > glib_screen_surface->max_offset) break;
+		
+		uc_pixels[offset] = cursor_temp[l++];
+		uc_pixels[offset + 1] = cursor_temp[l++];
+		uc_pixels[offset + 2] = cursor_temp[l++];
 		
 	}
 	
