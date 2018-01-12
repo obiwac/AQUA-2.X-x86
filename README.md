@@ -32,6 +32,12 @@ You can automatically create a Virtual Box VM by running
 $ make vm-setup
 ```
 
+And you can then run it with
+
+```bash
+$ make test
+```
+
 # Minimum / recommended Virtual Box VM specs
 
 | Specification  | Minimum       | Recommended    |

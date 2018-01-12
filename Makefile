@@ -67,7 +67,7 @@ clean:
 	$(RM) aqua/boot/kernel.bin
 
 test:
-	VBoxManage startvm "AQUA 2.x glib"
+	VBoxManage startvm "AQUA OS"
 
 main:
 	$(RM) src/c/c_kernel.c.o
