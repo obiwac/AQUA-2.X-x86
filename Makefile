@@ -72,6 +72,7 @@ main:
 	$(RM) src/de/main.o
 
 update:
-	rm -rf src/de/
+	$(RM) src/de/main.o
+	$(RM) src/de/res.o
 
 .PHONY: test clean main update

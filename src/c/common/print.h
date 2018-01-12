@@ -17,6 +17,8 @@
 	#define VGA_TEXT TRUE
 	#define SERIAL_OUTPUT TRUE
 	
+	unsigned char print_force_serial;
+	
 	void print_crude(char* string);
 	void printf_colour(colour_t colour, const char* format, char** arg);
 	void printf(char* format, ...);

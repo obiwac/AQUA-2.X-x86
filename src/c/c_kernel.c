@@ -67,8 +67,27 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	int i;
 	for (i = 0; i < 8182; i++) {
 		if ((inportb(0x64) & 1) && inportb(0x60) == 49) {
-			BOOT_AQUA = 0;
 			printf_warn("Entering kernel shell instead of AQUA DE ...\n");
+			BOOT_AQUA = 0;
+			break;
+			
+		}
+		
+		if ((inportb(0x64) & 1) && inportb(0x60) == 48) {
+			printf_warn("Forcing serial output ...\n");
+			print_force_serial = 1;
+			break;
+			
+		}
+		
+		if ((inportb(0x64) & 1) && inportb(0x60) == 47) {
+			printf_warn("Forcing ACPI to poweroff ...\n");
+			
+			printf("ACPI: Initializing ... \n");
+			printf_minor("\tACPI: %d\n", acpi_init());
+			
+			acpi_poweroff();
+			
 			break;
 			
 		}
