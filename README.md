@@ -10,14 +10,27 @@ $ git clone https://github.com/obiwac/AQUA-2.X-x86
 $ cd AQUA-2.X-x86
 ```
 
+Make sure that you have all the requiered dependencies by running
+
+```bash
+$ make download
+```
+
+**NOTE** This uses `apt` to install the packages so it will only work on Debian/Ubuntu based systems.
 Then, build it with
 
 ```bash
 $ make
 ```
 
-This will build it with an `i686-elf` cross compiler if you have one, but will instead compile with `gcc -m32` if it doesn't detect it.
+This will build it with an `i686-elf` cross compiler if you have one (if not you can automatically compile it with `$ make cross-compiler`), but will instead compile with `gcc -m32` if it doesn't detect it.
 Then you can setup your Virtual Box VM or what not with the aqua.iso in aqua/.
+
+You can automatically create a Virtual Box VM by running
+
+```bash
+$ make vm-setup
+```
 
 # Minimum / recommended Virtual Box VM specs
 
