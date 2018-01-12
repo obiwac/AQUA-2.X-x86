@@ -1,5 +1,7 @@
 
+APT := $(shell command -v apt 2> /dev/null);
 CROSS_CC := $(shell command -v i686-elf-gcc 2> /dev/null)
+
 CC := gcc -m32
 AS := nasm
 
@@ -76,16 +78,16 @@ update:
 	$(RM) src/de/res.o
 
 download:
-	sudo apt install virtualbox
-	
-	sudo apt install xorriso
-	sudo apt install grub
-	
-	sudo apt install make
-	sudo apt install gcc
-	sudo apt install nasm
+ifdef $(APT)
+	sudo apt install virtualbox \
+		xorriso \
+		grub \
+		make \
+		gcc \
+		nasm
+endif
 
-vm_setup:
+vm-setup:
 	if [ -e "aqua/aqua.iso" ]; then $(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...); fi
 	
 	VBoxManage createvm --name "AQUA OS" --register
@@ -107,7 +109,18 @@ vm_setup:
 	VBoxManage modifyvm "AQUA OS" --uart1 4 0x3F8
 	VBoxManage modifyvm "AQUA OS" --uartmode1 file serial.txt
 
-cross_compiler:
-	echo "TODO"
+cross-compiler:
+ifdef $(APT)
+	sudo apt install make \
+		bison \
+		flex \
+		libgmp3-dev \
+		libmpfr-dev \
+		libmpc-dev \
+		texinfo \
+		nano
+endif
+	
+	sh scripts/cross-compiler.sh
 
-.PHONY: test clean main update download vm_setup cross_compiler
+.PHONY: test clean main update download vm-setup cross-compiler

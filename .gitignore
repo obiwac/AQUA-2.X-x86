@@ -7,3 +7,4 @@ serial.txt
 commit.sh
 
 bin/
+cross_compiler/
