@@ -106,27 +106,31 @@ void glib_update(void) {
 			offset = i + _x * cpc;
 			if (offset > glib_screen_surface->max_offset) break;
 			
-			r = mouse_cursor[j] & 0xFF;
-			a = mouse_cursor[j + 3];
-			
-			_r = uc_pixels[offset] + (r - uc_pixels[offset]) * a / 0xFF;
-			_g = uc_pixels[offset + 1] + (r - uc_pixels[offset + 1]) * a / 0xFF;
-			_b = uc_pixels[offset + 2] + (r - uc_pixels[offset + 2]) * a / 0xFF;
-			
-			_r = _r > 255 ? 255 : _r;
-			_g = _g > 255 ? 255 : _g;
-			_b = _b > 255 ? 255 : _b;
-			
-			j += 4;
 			cursor_temp_offsets[k++] = offset;
 			
 			cursor_temp[l++] = uc_pixels[offset];
 			cursor_temp[l++] = uc_pixels[offset + 1];
 			cursor_temp[l++] = uc_pixels[offset + 2];
 			
-			uc_pixels[offset] = (unsigned char) _r;
-			uc_pixels[offset + 1] = (unsigned char) _g;
-			uc_pixels[offset + 2] = (unsigned char) _b;
+			j += 4;
+			
+			if (_x < glib_screen_surface->w) {
+				r = mouse_cursor[j - 4] & 0xFF;
+				a = mouse_cursor[j - 1];
+				
+				_r = uc_pixels[offset] + (r - uc_pixels[offset]) * a / 0xFF;
+				_g = uc_pixels[offset + 1] + (r - uc_pixels[offset + 1]) * a / 0xFF;
+				_b = uc_pixels[offset + 2] + (r - uc_pixels[offset + 2]) * a / 0xFF;
+				
+				_r = _r > 255 ? 255 : _r;
+				_g = _g > 255 ? 255 : _g;
+				_b = _b > 255 ? 255 : _b;
+				
+				uc_pixels[offset] = (unsigned char) _r;
+				uc_pixels[offset + 1] = (unsigned char) _g;
+				uc_pixels[offset + 2] = (unsigned char) _b;
+				
+			}
 			
 		}
 		

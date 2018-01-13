@@ -57,6 +57,8 @@ $(KERNEL): $(KERNEL_OBJ)
 	$(AS) $(ASFLAGS) -o $@ $<
 
 clean:
+	-rm *.log
+	
 	$(RM) $(KERNEL_OBJ)
 	$(RM) $(ISO)
 	$(RM) $(KERNEL)
