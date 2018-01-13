@@ -98,22 +98,21 @@ endif
 	
 	-VBoxManage unregistervm "AQUA OS" --delete
 	VBoxManage createvm --name "AQUA OS" --register
-	VBoxManage modifyvm "AQUA OS" --memory 1024
+	
+	VBoxManage modifyvm "AQUA OS" --memory 1024 \
+		--audiocontroller hda \
+		--nic1 nat \
+		--nictype1 82540EM \
+		--cableconnected1 on \
+		\
+		--uart1 0x3F8 4 \
+		--uartmode1 file serial.txt
 	
 	VBoxManage createhd --filename "virtualbox/AQUA Harddrive" --size 2048
 	VBoxManage storagectl "AQUA OS" --add ide --name "IDE"
 	
-	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive
-	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
-	
-	VBoxManage modifyvm "AQUA OS" --audiocontroller hda
-	
-	VBoxManage modifyvm "AQUA OS" --nic1 nat
-	VBoxManage modifyvm "AQUA OS" --nictype1 82540EM
-	VBoxManage modifyvm "AQUA OS" --cableconnected1 on
-	
-	VBoxManage modifyvm "AQUA OS" --uart1 0x3F8 4
-	VBoxManage modifyvm "AQUA OS" --uartmode1 file serial.txt
+	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive \
+		--storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
 
 cross-compiler:
 ifdef $(APT)

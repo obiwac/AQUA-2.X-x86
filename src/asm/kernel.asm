@@ -14,7 +14,7 @@ MB_CHECKSUM equ -(MB_MAGIC + MB_FLAGS)
 MB_TEXT_MODE equ 0
 MB_WIDTH equ 800
 MB_HEIGHT equ 600
-MB_BPP equ 24
+MB_BPP equ 32
 
 section .data
 	align 0x1000
