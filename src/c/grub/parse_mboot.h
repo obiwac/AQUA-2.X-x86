@@ -6,6 +6,7 @@
 	
 	#include "../types.h"
 	#include "../common/print.h"
+	#include "../specs/ram.h"
 	
 	#define CHECK_FLAG(flags, bit) ((flags) & (1 << (bit)))
 	

@@ -2,9 +2,15 @@
 #include "strlen.h"
 
 uint32_t strlen(const char* string) {
-	uint32_t i = 1;
-	while (string[i++]);
-	
-	return --i;
+	if (string[0]) {
+		uint32_t i = 1;
+		while (string[i++]);
+		
+		return --i;
+		
+	} else {
+		return 0;
+		
+	}
 	
 }

@@ -15,6 +15,7 @@ void parse_mboot(uint32_t magic, uint32_t address) {
 	
 	if (CHECK_FLAG(mbi->flags, 0)) {
 		printf("\tGRUB: mem_lower = %uKB, mem_upper = %uKB\n", (uint32_t) mbi->mem_lower, (uint32_t) mbi->mem_upper);
+		set_ram_max((uint64_t) mbi->mem_upper);
 		
 	} if (CHECK_FLAG(mbi->flags, 1)) {
 		printf("\tGRUB: boot_device = 0x%x\n", mbi->boot_device);

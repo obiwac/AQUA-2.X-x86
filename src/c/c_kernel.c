@@ -61,11 +61,13 @@ char vga_log[1000];
 static uint8_t startup = 1;
 static uint8_t BOOT_AQUA = 1;
 
+static uint8_t print_force_serial_de = 0;
+
 void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("Awaiting kernel boot keypress ...\n");
 	
 	int i;
-	for (i = 0; i < 0xFFFF; i++) {
+	for (i = 0; i < 0xFFFFF; i++) {
 		if (inportb(0x64) & 1) {
 			switch (inportb(0x60)) {
 				case 49: {
@@ -88,6 +90,12 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 					printf_minor("\tACPI: %d\n", acpi_init());
 					
 					acpi_poweroff();
+					break;
+					
+				} case 46: {
+					printf_warn("Forcing serial output in the DE ...\n");
+					print_force_serial_de = 1;
+					
 					break;
 					
 				} default: {
@@ -306,6 +314,12 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 			else printf_error("\"%s\" is unknown ... Type \"help\" for a list of commands.\n", buffer);
 			
 		}
+		
+	}
+	
+	if (print_force_serial_de) {
+		printf("DE: Forcing serial output ...\n");
+		print_force_serial = 1;
 		
 	}
 	
