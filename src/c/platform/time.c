@@ -78,7 +78,7 @@ unsigned char time_year(void) {
 }
 
 char* time_clock_digital(void) {
-	sprintf(clock_digital, "%d:%d", time_hours(), time_minutes());
+	sprintf(clock_digital, time_minutes() < 10 ? "%d:0%d" : "%d:%d", time_hours(), time_minutes());
 	return (char*) clock_digital;
 	
 }
