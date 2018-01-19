@@ -5,6 +5,23 @@
 	#include "../types.h"
 	#include "../common/print.h"
 	
+	#include "smbios/smbios_structs.h"
+	
+	#define SMBIOS_HEADER_TYPE_BIOS_INFO 0
+	#define SMBIOS_HEADER_TYPE_SYSTEM_INFO 1
+	#define SMBIOS_HEADER_TYPE_MAINBOARD_INFO 2
+	#define SMBIOS_HEADER_TYPE_CHASIS_INFO 3
+	#define SMBIOS_HEADER_TYPE_PROCESSOR_INFO 4
+	#define SMBIOS_HEADER_TYPE_CACHE_INFO 7
+	#define SMBIOS_HEADER_TYPE_SYSTEM_SLOTS_INFO 9
+	
+	#define SMBIOS_HEADER_TYPE_PHYSICAL_MEMORY_ARRAY 16
+	#define SMBIOS_HEADER_TYPE_MEMORY_DEVICE_INFO 17
+	#define SMBIOS_HEADER_TYPE_MEMORY_MAPPED_DEVICE_MAPPED_ADDRESSES 19
+	#define SMBIOS_HEADER_TYPE_SYSTEM_BOOT_INFO 32
+	
+	#define SMBIOS_HEADER_TYPE_END 127
+	
 	typedef struct {
 		char entry_point_string[4];
 		
@@ -36,7 +53,11 @@
 		
 	};
 	
+	struct smbios_header_t smbios_headers[11];
+	
 	char* smbios_entry(void);
 	smbios_entry_point_t* smbios_get(char* entry_ptr);
+	
+	
 	
 #endif

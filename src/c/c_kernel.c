@@ -200,8 +200,9 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 		printf_minor("\tSMBIOS exists at 0x%x.\n", (uint32_t) &smbios_entry_ptr);
 		smbios_entry_point_t* smbios = smbios_get(smbios_entry_ptr);
 		
-		printf_minor("\tSMBIOS entry point string %c%c%c%c\n", smbios_entry_ptr[0], smbios_entry_ptr[1], smbios_entry_ptr[2], smbios_entry_ptr[3]);
 		printf_minor("\tSMBIOS version %d.%d.\n", smbios->major_version, smbios->minor_version);
+		printf_minor("\tSMBIOS table address 0x%x.\n", smbios->table_addr);
+		
 		
 	} else {
 		printf_warn("SMBIOS does not exist.\n");
