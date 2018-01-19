@@ -51,7 +51,7 @@ void cmos_read_rtc_event(int ms) {
 	
 	cmos_day = cmos_get_rtc_register(0x07);
 	cmos_month = cmos_get_rtc_register(0x08);
-	cmos_year = cmos_get_rtc_register(0x08);
+	cmos_year = cmos_get_rtc_register(0x09);
 	
 	if (century_register != 0) {
 		cmos_century = cmos_get_rtc_register(century_register);
@@ -76,7 +76,7 @@ void cmos_read_rtc_event(int ms) {
 		
 		cmos_day = cmos_get_rtc_register(0x07);
 		cmos_month = cmos_get_rtc_register(0x08);
-		cmos_year = cmos_get_rtc_register(0x08);
+		cmos_year = cmos_get_rtc_register(0x09);
 		
 		if (century_register != 0) {
 			century = cmos_get_rtc_register(century_register);
