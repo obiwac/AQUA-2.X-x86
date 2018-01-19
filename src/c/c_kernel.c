@@ -55,6 +55,8 @@
 #include "descr_tables/idt.h"
 #include "descr_tables/gdt.h"
 
+#include "loading/loading.h"
+
 void main(void);
 char vga_log[1000];
 
@@ -111,6 +113,11 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	//~ vga_text_clear_screen();
 	parse_mboot(mb_magic, mb_address);
+	
+	if (BOOT_AQUA) {
+		show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc);
+		
+	}
 	
 	printf("GDT: Loading the gdt ...\n");
 	load_gdt();
