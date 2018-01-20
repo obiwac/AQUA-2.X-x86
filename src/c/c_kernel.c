@@ -114,11 +114,6 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	//~ vga_text_clear_screen();
 	parse_mboot(mb_magic, mb_address);
 	
-	if (BOOT_AQUA) {
-		show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc);
-		
-	}
-	
 	printf("GDT: Loading the gdt ...\n");
 	load_gdt();
 	
@@ -173,6 +168,11 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	printf("Interrupts: Storing interrupt flags ...\n");
 	__asm__ __volatile__ ("sti");
+	
+	if (BOOT_AQUA) {
+		printf("Loading: Showed loading screen in %dms ...\n", show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc));
+		
+	}
 	
 	detect_ints_enabled:
 	

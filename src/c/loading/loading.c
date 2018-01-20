@@ -2,7 +2,7 @@
 #include "loading.h"
 #include "res/aqua.h"
 
-void show_loading(uint32_t* _video_ptr, uint32_t width, uint32_t height, uint8_t cpc) {
+uint64_t show_loading(uint32_t* _video_ptr, uint32_t width, uint32_t height, uint8_t cpc) {
 	uint64_t full_size = width * height * cpc;
 	uint32_t colour;
 	
@@ -20,6 +20,8 @@ void show_loading(uint32_t* _video_ptr, uint32_t width, uint32_t height, uint8_t
 	int i;
 	int j;
 	
+	uint64_t start = pit_uptime;
+	
 	for (i = 0; i < 256; i += 256 / 48) {
 		k = 0;
 		colour = (i << 16) | (i << 8) | i;
@@ -33,5 +35,7 @@ void show_loading(uint32_t* _video_ptr, uint32_t width, uint32_t height, uint8_t
 		}
 		
 	}
+	
+	return pit_uptime - start;
 	
 }
