@@ -76,6 +76,8 @@
 		unsigned int timestamp;
 		unsigned char clicks;
 		
+		unsigned char keyboard_detected;
+		
 	} event_t;
 	
 	typedef struct {

@@ -28,10 +28,20 @@ event_list_t event_update(void) { /// TODO
 		.timestamp = 0,
 		.clicks = 0,
 		
+		.keyboard_detected = 1,
+		
 	};
 	
 	uint8_t mp = get_mouse_press();
 	uint8_t mr = get_mouse_release();
+	
+	keyboard_detected = 1;//~keyboard_echo();
+	event.keyboard_detected = keyboard_detected;
+	
+	if (!keyboard_detected) {
+		printf_warn("Keyboard was not found. It may have been unplugged ...\n");
+		
+	}
 	
 	uint8_t kp = get_key_press();
 	uint8_t kr = get_key_release();
