@@ -10,7 +10,7 @@ ifdef CROSS_CC
 CC := i686-elf-gcc
 endif
 
-CFLAGS := -ffreestanding -g -Wfatal-errors
+CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs
 ASFLAGS := -felf32
 LDFLAGS := -Tbuild/linker.ld -nostdlib -lgcc -g
 EMUFLAGS := -net none -serial stdio
@@ -65,7 +65,9 @@ clean:
 	
 	$(RM) src/de/main.o
 	$(RM) src/de/res.o
+	
 	$(RM) src/c/pci/database/database.h
+	$(RM) src/c/pci/database/vendor_count.h
 	
 	$(RM) aqua/aqua.iso
 	$(RM) aqua/boot/kernel.bin

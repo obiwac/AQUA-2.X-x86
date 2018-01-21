@@ -33,13 +33,13 @@ for vendor in devices:
 		
 		products.append({
 			"id": int(product_tuple[0], 16),
-			"name": product_tuple[1].replace('"', "\\\"").replace('\\', "\\\\"),
+			"name": product_tuple[1].replace('\\', "\\\\").replace('"', ''.join(['\\', '\"'])),
 			
 		})
 	
 	final.append({
 		"id": int(vendor_tuple[0], 16),
-		"name": vendor_tuple[1].replace('"', "\\\"").replace('\\', "\\\\"),
+		"name": vendor_tuple[1].replace('\\', "\\\\").replace('"', ''.join(['\\', '\"'])),
 		
 		"product_count": len(devices[vendor]),
 		"products": products,
@@ -70,6 +70,12 @@ print "Writing to database.h ..."
 
 database_h = open("database.h", "wb")
 database_h.write(header)
+database_h.close()
+
+print "Creating vendor_count.h ..."
+
+database_h = open("vendor_count.h", "wb")
+database_h.write("#define PCI_VENDOR_COUNT 0x%x" % (len(final)))
 database_h.close()
 
 print "Done."

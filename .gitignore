@@ -7,7 +7,9 @@
 *.log
 
 serial.txt
+
 src/c/pci/database/database.h
+src/c/pci/database/vendor_count.h
 
 bin/
 cross_compiler/

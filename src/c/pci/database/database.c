@@ -1,7 +1,8 @@
 
 #include "../structs.h"
+#include "vendor_count.h"
 
-#define PCI_VENDOR_COUNT 0x863
+void* malloc(uint32_t size);
 
 void pci_init_database(void) {
 	pci_vendors = (pci_vendor_t*) malloc(PCI_VENDOR_COUNT * sizeof(pci_vendor_t));
