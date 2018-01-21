@@ -99,7 +99,7 @@ ifdef $(AQUA_ISO)
 	$(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...)
 endif
 	
-	sh scripts/rm_vm.sh
+	sh scripts/rm_vm.sh 2>&1 | tee logs/rm-vm.log
 	mkdir -p virtualbox/
 	
 	-VBoxManage unregistervm "AQUA OS" --delete
@@ -112,7 +112,7 @@ endif
 		--cableconnected1 on \
 		\
 		--uart1 0x3F8 4 \
-		--uartmode1 file serial.txt
+		--uartmode1 file logs/serial.log
 	
 	VBoxManage createhd --filename "virtualbox/AQUA Harddrive" --size 2048
 	VBoxManage storagectl "AQUA OS" --add ide --name "IDE"
@@ -121,10 +121,10 @@ endif
 		--storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
 
 pci-database:
-	sh scripts/pci-database.sh
+	sh scripts/pci-database.sh 2>&1 | tee logs/pci-database.log
 
 commit:
-	sh scripts/commit.sh
+	sh scripts/commit.sh 2>&1 | tee logs/commit.log
 
 cross-compiler:
 ifdef $(APT)
@@ -138,6 +138,6 @@ ifdef $(APT)
 		nano
 endif
 	
-	sh scripts/cross-compiler.sh
+	sh scripts/cross-compiler.sh 2>&1 | tee logs/cross-compiler.log
 
 .PHONY: test clean main update download vm-setup cross-compiler pci-database commit
