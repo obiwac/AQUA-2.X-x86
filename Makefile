@@ -65,6 +65,7 @@ clean:
 	
 	$(RM) src/de/main.o
 	$(RM) src/de/res.o
+	$(RM) src/c/pci/database/database.h
 	
 	$(RM) aqua/aqua.iso
 	$(RM) aqua/boot/kernel.bin

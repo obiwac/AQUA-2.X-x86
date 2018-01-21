@@ -48,7 +48,7 @@ for vendor in devices:
 
 print "Creating database.h ..."
 
-header = ""
+header = "#define PCI_DATABASE_CREATED 1\n"
 i = 0
 
 for vendor in final:

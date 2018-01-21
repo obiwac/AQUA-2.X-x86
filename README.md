@@ -38,6 +38,14 @@ And you can then run it with
 $ make test
 ```
 
+If you want to build AQUA with the PCI database, run
+
+```bash
+$ make pci-database
+```
+
+to download the latest PCI-ID and create a database.
+
 # Minimum / recommended Virtual Box VM specs
 
 | Specification  | Minimum       | Recommended    |
