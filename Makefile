@@ -10,7 +10,7 @@ ifdef CROSS_CC
 CC := i686-elf-gcc
 endif
 
-CFLAGS := -ffreestanding -g
+CFLAGS := -ffreestanding -g -Wfatal-errors
 ASFLAGS := -felf32
 LDFLAGS := -Tbuild/linker.ld -nostdlib -lgcc -g
 EMUFLAGS := -net none -serial stdio
@@ -84,6 +84,7 @@ download:
 ifdef $(APT)
 	sudo apt install virtualbox \
 		xorriso \
+		mtools \
 		grub \
 		make \
 		gcc \
