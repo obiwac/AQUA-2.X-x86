@@ -54,6 +54,7 @@
 	ata_drive_t* drive_quaternary_slave;
 	
 	ata_drive_t* ata_current_drive;
+	uint8_t ata_current_drive_set;
 	
 	ata_drive_t ata_setup(uint8_t master, uint16_t port_base);
 	uint8_t ata_identify(ata_drive_t* drive);

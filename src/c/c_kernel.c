@@ -274,14 +274,15 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf_minor("\tATA: Identifying quaternary slave ...\n");
 	ata_identify(drive_quaternary_slave);
 	
-	printf("ATA: The selected drive is %s %s.\n", ata_current_drive->name, ata_current_drive->master_name);
+	if (ata_current_drive_set) printf("ATA: The selected drive is %s %s.\n", ata_current_drive->name, ata_current_drive->master_name);
+	else printf_warn("ATA: No useable drive was found, so no drives were selected ...\n");
 	
 	if (!startup) goto cmd_line;
 	
 	printf("CMOS: Initializing ...\n");
 	cmos_init();
 	
-	printf_minor("\tCMOS: Adding RTC update event to occur every minute ... \n");
+	printf_minor("\tCMOS: Adding RTC update event to occur every minute ...\n");
 	add_event(60000, cmos_read_rtc_event);
 	
 	printf("ACPI: Initializing ... \n");

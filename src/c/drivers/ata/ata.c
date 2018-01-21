@@ -20,6 +20,7 @@ ata_drive_t* drive_quaternary_master;
 ata_drive_t* drive_quaternary_slave;
 
 ata_drive_t* ata_current_drive;
+uint8_t ata_current_drive_set = 0;
 
 ata_drive_t ata_setup(uint8_t master, uint16_t port_base) {
 	ata_drive_t drive;
@@ -113,6 +114,7 @@ uint8_t ata_identify(ata_drive_t* drive) {
 	
 	if (drive->useable) {
 		ata_current_drive = drive;
+		ata_current_drive_set = 1;
 		
 	}
 	
