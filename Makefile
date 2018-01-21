@@ -117,7 +117,10 @@ endif
 		--storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
 
 pci-database:
-	python src/c/pci/database/database.py
+	sh scripts/pci-database.sh
+
+commit:
+	sh scripts/commit.sh
 
 cross-compiler:
 ifdef $(APT)
@@ -133,4 +136,4 @@ endif
 	
 	sh scripts/cross-compiler.sh
 
-.PHONY: test clean main update download vm-setup cross-compiler pci-database
+.PHONY: test clean main update download vm-setup cross-compiler pci-database commit

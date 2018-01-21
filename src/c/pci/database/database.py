@@ -14,10 +14,10 @@ print "Parsing raw data ..."
 for line in lines:
 	if len(line) > 1 and not line[0] in "#C":
 		if line[0] == '\t' and line[1] == '\t': continue
-		elif line[0] == '\t': devices[vendor].append(line[1: len(line) - 1])
+		elif line[0] == '\t': devices[vendor].append(line[1: len(line)])
 		
 		else:
-			vendor = line[0: len(line) - 1]
+			vendor = line[0: len(line)]
 			devices[vendor] = []
 
 print "Creating descriptors for all vendors (%d) ..." % (len(devices))
@@ -52,11 +52,13 @@ header = ""
 i = 0
 
 for vendor in final:
-	header = "%s\npci_vendors[%d]={%d,\"%s\",%d,(pci_product_t*)malloc(%d*sizeof(pci_product_t))};" % (header, i, vendor["id"], vendor["name"], vendor["product_count"], vendor["product_count"])
+	if vendor["product_count"] == 0: header = "%s\npci_vendors[0x%x]={0x%x,\"%s\",0};" % (header, i, vendor["id"], vendor["name"])
+	else: header = "%s\npci_vendors[0x%x]={0x%x,\"%s\",0x%x,(pci_product_t*)malloc(0x%x*sizeof(pci_product_t))};" % (header, i, vendor["id"], vendor["name"], vendor["product_count"], vendor["product_count"])
+	
 	j = 0
 	
 	for product in vendor["products"]:
-		header = "%s\n\tpci_vendors[%d].products[%d]={%d,\"%s\"};" % (header, i, j, product["id"], product["name"])
+		header = "%s\n\tpci_vendors[0x%x].products[0x%x]={0x%x,\"%s\"};" % (header, i, j, product["id"], product["name"])
 		j += 1
 	
 	i += 1
