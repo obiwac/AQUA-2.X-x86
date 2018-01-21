@@ -10,6 +10,8 @@
 serial.txt
 commit.sh
 
+src/c/pci/database/database.h
+
 bin/
 cross_compiler/
 virtualbox/

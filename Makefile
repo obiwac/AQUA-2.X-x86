@@ -116,6 +116,9 @@ endif
 	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive \
 		--storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
 
+pci-database:
+	python src/c/pci/database/database.py
+
 cross-compiler:
 ifdef $(APT)
 	sudo apt install make \
@@ -130,4 +133,4 @@ endif
 	
 	sh scripts/cross-compiler.sh
 
-.PHONY: test clean main update download vm-setup cross-compiler
+.PHONY: test clean main update download vm-setup cross-compiler pci-database
