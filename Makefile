@@ -1,7 +1,9 @@
 
-APT := $(shell command -v apt 2> /dev/null);
-CROSS_CC := $(shell command -v i686-elf-gcc 2> /dev/null)
-AQUA_ISO := $(shell ls aqua/aqua.iso 2> /dev/null)
+### TODO "log" target
+
+APT := $(shell command -v apt);
+CROSS_CC := $(shell command -v i686-elf-gcc)
+AQUA_ISO := $(shell ls aqua/aqua.iso)
 
 CC := gcc -m32
 AS := nasm
@@ -20,6 +22,10 @@ KERNEL := bin/kernel.bin
 
 KERNEL_SRC := $(shell find src/ -iname *.c -o -iname *.asm ! -iname kernel.asm)
 KERNEL_OBJ := $(addsuffix .o,$(KERNEL_SRC))
+
+prebuild:
+	echo "Running make ..."
+	mkdir -p logs/
 
 $(ISO): $(KERNEL)
 	mkdir -p aqua/boot/grub
@@ -48,7 +54,7 @@ $(KERNEL): $(KERNEL_OBJ)
 		wget "http://download819.mediafire.com/p6uft6o6b3pg/49hp2jcbv23aqbk/res.o" -O src/de/res.o; fi
 	
 	mkdir -p $(dir $@)
-	$(CC) $(LDFLAGS) -o $@ src/asm/kernel.asm.o $^ src/de/main.o src/de/res.o
+	$(CC) $(LDFLAGS) -o $@ src/asm/kernel.asm.o $^ src/de/main.o src/de/res.o 2>&1 | tee logs/link.log
 
 %.c.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
