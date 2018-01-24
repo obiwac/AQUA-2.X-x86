@@ -24,7 +24,7 @@ KERNEL_SRC := $(shell find src/ -iname *.c -o -iname *.asm ! -iname kernel.asm)
 KERNEL_OBJ := $(addsuffix .o,$(KERNEL_SRC))
 
 prebuild:
-	echo "Running make ..."
+	@echo "Running Makefile ..."
 	mkdir -p logs/
 
 $(ISO): $(KERNEL)
@@ -62,7 +62,7 @@ $(KERNEL): $(KERNEL_OBJ)
 %.asm.o: %.asm
 	$(AS) $(ASFLAGS) -o $@ $<
 
-clean:
+clean: prebuild
 	-rm *.log
 	
 	$(RM) $(KERNEL_OBJ)
@@ -78,18 +78,18 @@ clean:
 	$(RM) aqua/aqua.iso
 	$(RM) aqua/boot/kernel.bin
 
-test:
+test: prebuild
 	VBoxManage startvm "AQUA OS"
 
-main:
+main: prebuild
 	$(RM) src/c/c_kernel.c.o
 	$(RM) src/de/main.o
 
-update:
+update: prebuild
 	$(RM) src/de/main.o
 	$(RM) src/de/res.o
 
-download:
+download: prebuild
 ifdef $(APT)
 	sudo apt install virtualbox \
 		xorriso \
@@ -100,7 +100,7 @@ ifdef $(APT)
 		nasm
 endif
 
-vm-setup:
+vm-setup: prebuild
 ifdef $(AQUA_ISO)
 	$(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...)
 endif
@@ -126,13 +126,13 @@ endif
 	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive \
 		--storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
 
-pci-database:
+pci-database: prebuild
 	sh scripts/pci-database.sh 2>&1 | tee logs/pci-database.log
 
-commit:
+commit: prebuild
 	sh scripts/commit.sh 2>&1 | tee logs/commit.log
 
-cross-compiler:
+cross-compiler: prebuild
 ifdef $(APT)
 	sudo apt install make \
 		bison \
