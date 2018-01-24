@@ -27,6 +27,9 @@ prebuild:
 	@echo "Running Makefile ..."
 	mkdir -p logs/
 
+all: $(ISO)
+	@echo "Building $(ISO) ..."
+
 $(ISO): $(KERNEL)
 	mkdir -p aqua/boot/grub
 	cp $(KERNEL) aqua/boot/kernel.bin
@@ -146,4 +149,4 @@ endif
 	
 	sh scripts/cross-compiler.sh 2>&1 | tee logs/cross-compiler.log
 
-.PHONY: test clean main update download vm-setup cross-compiler pci-database commit
+.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all
