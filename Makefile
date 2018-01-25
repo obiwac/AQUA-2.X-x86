@@ -5,6 +5,14 @@ AS := nasm
 APT := $(shell command -v apt 2> /dev/null)
 CC := $(shell command -v i686-elf-gcc 2> /dev/null)
 
+ifndef CC
+CC := $(shell command -v cross_compiler/opt/cross/bin/i686-elf-gcc 2> /dev/null)
+endif
+
+ifndef CC
+CC := gcc -m32
+endif
+
 CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs
 ASFLAGS := -felf32
 LDFLAGS := -Tbuild/linker.ld -nostdlib -lgcc -g
