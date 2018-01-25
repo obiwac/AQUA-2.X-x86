@@ -45,6 +45,13 @@ $ make pci-database
 ```
 
 to download the latest PCI-ID and create a database.
+If you ever discover a bug, run
+
+```bash
+$ make bug
+```
+
+This will create a `bug_report.zip` file with some useful diagnostic information (compiler, date, logs, ...) Send the resulting file to the #support channel on my discord (https://discord.gg/ac3mX7u)
 
 # Minimum / recommended Virtual Box VM specs
 
