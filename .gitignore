@@ -6,6 +6,7 @@
 *.vdi
 *.log
 
+bug_report.zip
 serial.txt
 
 src/c/pci/database/database.h

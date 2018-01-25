@@ -1,16 +1,9 @@
 
-### TODO "log" target
-
-APT := $(shell command -v apt);
-CROSS_CC := $(shell command -v i686-elf-gcc)
 AQUA_ISO := $(shell ls aqua/aqua.iso)
-
-CC := gcc -m32
 AS := nasm
 
-ifdef CROSS_CC
-CC := i686-elf-gcc
-endif
+APT := $(shell command -v apt 2> /dev/null)
+CC := $(shell command -v i686-elf-gcc 2> /dev/null)
 
 CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs
 ASFLAGS := -felf32
@@ -67,6 +60,7 @@ $(KERNEL): $(KERNEL_OBJ)
 
 clean: prebuild
 	-rm *.log
+	-rm bug_report.zip
 	
 	$(RM) $(KERNEL_OBJ)
 	$(RM) $(ISO)
@@ -76,13 +70,15 @@ clean: prebuild
 	$(RM) src/de/res.o
 	
 	$(RM) src/c/pci/database/database.h
-	$(RM) src/c/pci/database/vendor_count.h
+	echo > src/c/pci/database/vendor_count.h
 	
 	$(RM) aqua/aqua.iso
 	$(RM) aqua/boot/kernel.bin
 
 test: prebuild
-	VBoxManage startvm "AQUA OS"
+	VBoxManage list runningvms | sed -r 's/.*\{(.*)\}/\1/' | xargs -L1 -I {} VBoxManage controlvm {} poweroff
+	sleep 1
+	VBoxManage startvm "AQUA OS" 2>&1 | tee logs/virtualbox.log
 
 main: prebuild
 	$(RM) src/c/c_kernel.c.o
@@ -93,18 +89,19 @@ update: prebuild
 	$(RM) src/de/res.o
 
 download: prebuild
-ifdef $(APT)
+ifdef APT
 	sudo apt install virtualbox \
 		xorriso \
 		mtools \
-		grub \
+		grub2-common:i386 \
 		make \
 		gcc \
-		nasm
+		nasm \
+		git
 endif
 
 vm-setup: prebuild
-ifdef $(AQUA_ISO)
+ifdef AQUA_ISO
 	$(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...)
 endif
 	
@@ -133,10 +130,11 @@ pci-database: prebuild
 	sh scripts/pci-database.sh 2>&1 | tee logs/pci-database.log
 
 commit: prebuild
+	echo > src/c/pci/database/vendor_count.h
 	sh scripts/commit.sh 2>&1 | tee logs/commit.log
 
 cross-compiler: prebuild
-ifdef $(APT)
+ifdef APT
 	sudo apt install make \
 		bison \
 		flex \
@@ -149,4 +147,36 @@ endif
 	
 	sh scripts/cross-compiler.sh 2>&1 | tee logs/cross-compiler.log
 
-.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all
+self: prebuild
+	sh scripts/self.sh 2>&1 | tee logs/self.log
+
+define echo_colour
+	tput setaf 1
+	@echo $1
+	@tput sgr0
+endef
+
+bug: prebuild
+	-rm bug_report.zip
+	
+	$(call echo_colour, "Please enter a breif description of your bug")
+	@read description
+	echo $$description > logs/description.log
+	
+	mkdir -p logs/extra_info/
+	mkdir -p logs/extra_info/has/
+	
+	echo $$(date) > logs/extra_info/date.log
+	echo $$(time) > logs/extra_info/time.log
+	
+	echo $(APT) > logs/extra_info/has/apt.log
+	echo $(CC) > logs/extra_info/has/c_compiler.log
+	echo $(AS) > logs/extra_info/has/as_compiler.log
+	
+	zip bug_report logs/*.log
+	$(call echo_colour, "PLEASE SEND THE \"bug_report.zip\" FILE LOCATED IN THIS DIRECTORY ON THE #support CHANNEL ON MY DISCORD (https://discord.gg/ac3mX7u)")
+
+auto: prebuild
+	sh scripts/auto.sh
+
+.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto
