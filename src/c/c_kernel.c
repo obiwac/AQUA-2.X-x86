@@ -131,7 +131,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	printf_minor("\tInterrupts: Installing PIT on IRQ0 ...\n");
 	pit_install();
-	pit_phase(1000);
+	pit_phase(1);
 	
 	printf_minor("\tInterrupts: Installing keyboard on IRQ1 ...\n");
 	if (BOOT_AQUA) keyboard_install();
