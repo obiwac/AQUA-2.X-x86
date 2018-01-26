@@ -109,8 +109,8 @@ ifdef APT
 endif
 
 vm-setup: prebuild
-ifdef AQUA_ISO
-	$(error aqua/aqua.iso was not found. You need to have build AQUA with `make` to be able to automatically create a VirtualBox VM ...)
+ifndef AQUA_ISO
+	$(error aqua/aqua.iso was not found. You need to have build AQUA with `make all` to be able to automatically create a VirtualBox VM ...)
 endif
 	
 	sh scripts/rm_vm.sh 2>&1 | tee logs/rm-vm.log
@@ -131,8 +131,8 @@ endif
 	VBoxManage createhd --filename "virtualbox/AQUA Harddrive" --size 2048
 	VBoxManage storagectl "AQUA OS" --add ide --name "IDE"
 	
-	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive \
-		--storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
+	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 1 --device 0 --medium aqua/aqua.iso --type dvddrive
+	VBoxManage storageattach "AQUA OS" --storagectl "IDE" --port 0 --device 0 --medium "virtualbox/AQUA Harddrive.vdi" --type hdd
 
 pci-database: prebuild
 	sh scripts/pci-database.sh 2>&1 | tee logs/pci-database.log
