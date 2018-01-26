@@ -56,6 +56,7 @@
 #include "descr_tables/gdt.h"
 
 #include "loading/loading.h"
+#include "specs/cpu_speed.h"
 
 void main(void);
 char vga_log[1000];
@@ -131,7 +132,6 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	printf_minor("\tInterrupts: Installing PIT on IRQ0 ...\n");
 	pit_install();
-	pit_phase(1);
 	
 	printf_minor("\tInterrupts: Installing keyboard on IRQ1 ...\n");
 	if (BOOT_AQUA) keyboard_install();
@@ -169,8 +169,19 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("Interrupts: Storing interrupt flags ...\n");
 	__asm__ __volatile__ ("sti");
 	
+	printf("PIT: Setting phaze to 1000Hz ...\n");
+	pit_phase(1000);
+	
 	if (BOOT_AQUA) {
-		printf("Loading: Showed loading screen in %dms ...\n", show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc));
+		printf("Loading: Showing loading screen ...\n");
+		printf("CPU Speed: Setting CPU speed to the time it takes for the loading screen to load ...\n");
+		
+		cpu_speed = show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc);
+		printf("Loading: Showed loading screen in %dms.\n", cpu_speed);
+		
+	} else {
+		printf("CPU Speed: Setting CPU speed to CPU_SPEED_REFERENCE (%dms)\n", CPU_SPEED_REFERENCE);
+		cpu_speed = CPU_SPEED_REFERENCE;
 		
 	}
 	

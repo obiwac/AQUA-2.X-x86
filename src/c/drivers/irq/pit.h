@@ -8,8 +8,8 @@
 	#include "../../int/irq.h"
 	#include "../../time/events.h"
 	
-	uint32_t pit_uptime;
-	extern uint32_t pit_uptime;
+	uint64_t pit_uptime;
+	extern uint64_t pit_uptime;
 	
 	extern void cpu_sleep(uint64_t ticks);
 	
