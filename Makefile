@@ -174,17 +174,19 @@ bug: prebuild
 	mkdir -p logs/extra_info/
 	mkdir -p logs/extra_info/has/
 	
-	echo $$(date) > logs/extra_info/date.log
-	echo $$(time) > logs/extra_info/time.log
+	echo $$(date) > logs/extra_info/stamp.log
 	
 	echo $(APT) > logs/extra_info/has/apt.log
 	echo $(CC) > logs/extra_info/has/c_compiler.log
 	echo $(AS) > logs/extra_info/has/as_compiler.log
 	
-	zip bug_report logs/*.log
+	zip -r bug_report.zip logs/
 	$(call echo_colour, "PLEASE SEND THE \"bug_report.zip\" FILE LOCATED IN THIS DIRECTORY ON THE #support CHANNEL ON MY DISCORD (https://discord.gg/ac3mX7u)")
 
 auto: prebuild
 	sh scripts/auto.sh
 
-.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto
+ultra-clean: clean
+	-rm -rf cross_compiler/
+
+.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean
