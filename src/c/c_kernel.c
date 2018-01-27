@@ -13,8 +13,9 @@
 #include "graphics/colour.h"
 
 #include "specs/video.h"
-#include "specs/version.h"
-#include "specs/help.h"
+#include "specs/version.h" /// REMME
+#include "specs/help.h" /// REMME
+#include "specs/pci.h"
 
 #include "drivers/power/acpi.h"
 #include "drivers/power/shutdown.h"
@@ -306,6 +307,17 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	printf("PCI: Analysing devices ...\n");
 	pci_analyse();
+	
+	printf("PCI: Selecting main cards ...\n");
+	
+	if (!pci_graphics_card_set) printf_warn("\tWARNING No graphics card was selected.\n");
+	else printf_minor("\tGraphics card: %s from %s\n", pci_graphics_card_device_name, pci_graphics_card_vendor_name);
+	
+	if (!pci_sound_card_set) printf_warn("\tWARNING No sound card was selected.\n");
+	else printf_minor("\tSound card: %s from %s\n", pci_sound_card_device_name, pci_sound_card_vendor_name);
+	
+	if (!pci_networking_card_set) printf_warn("\tWARNING No networking card was selected.\n");
+	else printf_minor("\tNetworking card: %s from %s\n", pci_networking_card_device_name, pci_networking_card_vendor_name);
 	
 	if (!startup) goto cmd_line;
 	

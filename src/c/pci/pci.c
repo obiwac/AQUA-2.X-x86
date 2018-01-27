@@ -164,8 +164,16 @@ void pci_analyse(void) {
 					
 				}
 				
+				uint16_t class_and_sub = pci_read_word(bus, device, 0, 10);
+				
+				device_descriptor.class_id = (uint8_t) (class_and_sub >> 8);
+				device_descriptor.subclass_id = (uint8_t) (class_and_sub & 0xFF);
+				device_descriptor.interface_id = (uint8_t) (pci_read_word(bus, device, 0, 8) >> 8);
+				
 				driver = pci_get_driver(device_descriptor);
-				printf_minor("\tFound === %s === from === %s === ...\n", driver.device_name, driver.vendor_name);
+				
+				if (driver.unknown) printf_warn("\tWARNING The PCI database was not constructed.\n");
+				else printf_minor("\tFound %s (%s) from %s ...\n", driver.device_name, driver.device_type, driver.vendor_name);
 				
 			}
 			
@@ -260,14 +268,26 @@ pci_bar_t pci_get_bar(uint16_t bus, uint16_t device, uint16_t function, uint16_t
 
 #include "database/vendor_count.h"
 #include "structs.h"
+#include "layman.h"
+#include "defs.h"
 
 pci_vendor_t* pci_init_database(void);
+static pci_vendor_t* data;
 
-pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) {
-	pci_driver_descriptor_t result;
-	result.device = device;
+#define PCI_SET_NONE 0
+#define PCI_SET_NETWORKING 1
+#define PCI_SET_GRAPHICS 2
+#define PCI_SET_SOUND 3
+
+pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TODO device.subclass_id & device.interface_id
+	pci_driver_descriptor_t result = {
+		.unknown = 0,
+		.device = device
+		
+	};
 	
-	pci_vendor_t* data = pci_init_database();
+	data = pci_init_database();
+	uint8_t set = PCI_SET_NONE;
 	
 	#ifdef PCI_VENDOR_COUNT
 		result.vendor_name = "unknown";
@@ -283,6 +303,54 @@ pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) {
 				for (p = 0; p < data[v].product_count; p++) {
 					if (data[v].products[p].id == result.device.device_id) {
 						result.device_name = data[v].products[p].name;
+						
+						switch (result.device.class_id) {
+							case PCI_CLASS_MASS_STORAGE_CONTROLLER: result.device_type = "mass storage controller"; break;
+							case PCI_CLASS_NETWORK_CONTROLLER: {
+								result.device_type = "network controller";
+								set = PCI_SET_NETWORKING;
+								
+								break;
+								
+							} case PCI_CLASS_DISPLAY_CONTROLLER: {
+								result.device_type = "display controller";
+								set = PCI_SET_GRAPHICS;
+								
+								break;
+								
+							} case PCI_CLASS_MULTIMEDIA_CONTROLLER: {
+								result.device_type = "multimedia controller";
+								set = PCI_SET_SOUND;
+								
+								break;
+								
+							} case PCI_CLASS_MEMORY_CONTROLLER: result.device_type = "memory controller"; break;
+							case PCI_CLASS_BRIDGE_DEVICE: result.device_type = "bridge device"; break;
+							case PCI_CLASS_SIMPLE_COMMNUICATION_CONTROLLER: result.device_type = "simple communication controller"; break;
+							case PCI_CLASS_BASE_SYSTEM_PERIPHERAL: result.device_type = "base system peripheral"; break;
+							case PCI_CLASS_INPUT_DEVICE: result.device_type = "input device"; break;
+							case PCI_CLASS_DOCKING_STATION: result.device_type = "docking station"; break;
+							case PCI_CLASS_PROCESSOR: result.device_type = "processor"; break;
+							case PCI_CLASS_SERIAL_BUS_CONTROLLER: result.device_type = "serial bus controller"; break;
+							case PCI_CLASS_WIRELESS_CONTROLLER: result.device_type = "wireless controller"; break;
+							case PCI_CLASS_INTELLIGENT_IO_CONTROLLER: result.device_type = "intelligent I/O controller"; break;
+							case PCI_CLASS_SATELLITE_COMMUNICATION_CONTROLLER: result.device_type = "satellite controller"; break;
+							case PCI_CLASS_ENCRYPTION_CONTROLLER: result.device_type = "encryption controller"; break;
+							case PCI_CLASS_DATA_ACQUISITION_AND_SIGNAL_PROCESSING_CONTROLLER: result.device_type = "data acquisition and signal processing controller"; break;
+							
+							case PCI_CLASS_NULL:
+							case PCI_CLASS_UNCLASSIFIABLE: {
+								break;
+								
+							} case PCI_CLASS_RESERVED:
+							default: {
+								result.device_type = "reserved";
+								break;
+								
+							}
+							
+						}
+						
 						break;
 						
 					}
@@ -295,10 +363,45 @@ pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) {
 			
 		}
 	#else
+		result.unknown = 1;
+		
 		result.vendor_name = "The PCI database was not constructed";
 		result.device_name = "The PCI database was not constructed";
 		result.device_type = "The PCI database was not constructed";
 	#endif
+	
+	switch (set) {
+		case PCI_SET_NETWORKING: {
+			pci_networking_card_set = 1;
+			
+			strcpy(pci_networking_card_device_name, result.device_name);
+			strcpy(pci_networking_card_vendor_name, result.vendor_name);
+			
+			break;
+			
+		} case PCI_SET_GRAPHICS: {
+			pci_graphics_card_set = 1;
+			
+			strcpy(pci_graphics_card_device_name, result.device_name);
+			strcpy(pci_graphics_card_vendor_name, result.vendor_name);
+			
+			break;
+			
+		} case PCI_SET_SOUND: {
+			pci_sound_card_set = 1;
+			
+			strcpy(pci_sound_card_device_name, result.device_name);
+			strcpy(pci_sound_card_vendor_name, result.vendor_name);
+			
+			break;
+			
+		} case PCI_SET_NONE:
+		default: {
+			break;
+			
+		}
+		
+	}
 	
 	return result;
 	
