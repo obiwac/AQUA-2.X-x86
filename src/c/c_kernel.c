@@ -169,7 +169,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("Interrupts: Storing interrupt flags ...\n");
 	__asm__ __volatile__ ("sti");
 	
-	printf("PIT: Setting phaze to 1000Hz ...\n");
+	printf("PIT: Setting phase to 1000Hz ...\n");
 	pit_phase(1000);
 	
 	if (BOOT_AQUA) {

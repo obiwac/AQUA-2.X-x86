@@ -4,6 +4,7 @@ AS := nasm
 
 APT := $(shell command -v apt 2> /dev/null)
 CC := $(shell command -v i686-elf-gcc 2> /dev/null)
+CPPC := $(shell command -v i686-elf-g++ 2> /dev/null)
 
 ifndef CC
 CC := $(shell command -v cross_compiler/opt/cross/bin/i686-elf-gcc 2> /dev/null)
@@ -13,7 +14,16 @@ ifndef CC
 CC := gcc -m32
 endif
 
+ifndef CPPC
+CPPC := $(shell command -v cross_compiler/opt/cross/bin/i686-elf-g++ 2> /dev/null)
+endif
+
+ifndef CPPC
+CPPC := g++ -m32
+endif
+
 CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs
+CPPFLAGS := $(CFLAGS)
 ASFLAGS := -felf32
 LDFLAGS := -Tbuild/linker.ld -nostdlib -lgcc -g
 EMUFLAGS := -net none -serial stdio
@@ -21,7 +31,7 @@ EMUFLAGS := -net none -serial stdio
 ISO := bin/aqua.iso
 KERNEL := bin/kernel.bin
 
-KERNEL_SRC := $(shell find src/ -iname *.c -o -iname *.asm ! -iname kernel.asm)
+KERNEL_SRC := $(shell find src/ -iname *.c -o -iname *.cpp -o -iname *.asm ! -iname kernel.asm)
 KERNEL_OBJ := $(addsuffix .o,$(KERNEL_SRC))
 
 prebuild:
@@ -62,6 +72,9 @@ $(KERNEL): $(KERNEL_OBJ)
 
 %.c.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+%.cpp.o: %.cpp
+	$(CPPC) $(CPPFLAGS) -c -o $@ $<
 
 %.asm.o: %.asm
 	$(AS) $(ASFLAGS) -o $@ $<
@@ -178,6 +191,7 @@ bug: prebuild
 	
 	echo $(APT) > logs/extra_info/has/apt.log
 	echo $(CC) > logs/extra_info/has/c_compiler.log
+	echo $(CPPC) > logs/extra_info/has/cpp_compiler.log
 	echo $(AS) > logs/extra_info/has/as_compiler.log
 	
 	zip -r bug_report.zip logs/
