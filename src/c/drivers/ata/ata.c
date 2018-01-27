@@ -54,6 +54,11 @@ ata_drive_t ata_setup(uint8_t master, uint16_t port_base) {
 }
 
 uint8_t ata_identify(ata_drive_t* drive) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
 	drive->useable = 0;
 	
 	outportb(drive->device_port, drive->master ? 0xA0 : 0xB0);
@@ -63,7 +68,7 @@ uint8_t ata_identify(ata_drive_t* drive) {
 	uint8_t status = inportb(drive->command_port);
 	
 	if (status == 0xFF) {
-		printf_warn("ATA Device BUS does not exist.\n");
+		printf_warn("\t\tATA Device BUS does not exist.\n");
 		
 	} else {
 		outportb(drive->device_port, drive->master ? 0xA0 : 0xB0);
@@ -77,7 +82,7 @@ uint8_t ata_identify(ata_drive_t* drive) {
 		status = inportb(drive->command_port);
 		
 		if (status == 0x00) {
-			printf_warn("ATA Device does not exist.\n");
+			printf_warn("\t\tATA Device does not exist.\n");
 			
 		} else {
 			while (((status & 0x80) == 0x80) && ((status & 1) != 1)) {
@@ -86,10 +91,10 @@ uint8_t ata_identify(ata_drive_t* drive) {
 			}
 			
 			if (status & 1) {
-				printf_warn("ATA Could not detect the device's identity (could possibly be the boot disk).\n");
+				printf_warn("\t\tATA Could not detect the device's identity (could possibly be the boot disk).\n");
 				
 			} else {
-				printf_minor("\t\n");
+				printf_minor("\t\t");
 				
 				int i;
 				for (i = 0; i < 256; i++) {
@@ -123,6 +128,11 @@ uint8_t ata_identify(ata_drive_t* drive) {
 }
 
 char* ata_read28(ata_drive_t* drive, uint32_t sector, int count) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
 	uint8_t auto_count = count < 0;
 	int data_size = auto_count ? BYTES_PER_SECTOR + 1 : count + 1;
 	char* data = (char*) kmalloc(data_size);
@@ -170,6 +180,8 @@ char* ata_read28(ata_drive_t* drive, uint32_t sector, int count) {
 					if (i + 1 < count) data[i + 1] = (wdata >> 8) & 0xFF;
 					if (auto_count && data[i + 1] == '\0') count = i;
 					
+					printf("%c", data[i + 1]);
+					
 				}
 				
 				for (i = count + (count % 2); i < BYTES_PER_SECTOR; i += 2) {
@@ -190,6 +202,11 @@ char* ata_read28(ata_drive_t* drive, uint32_t sector, int count) {
 }
 
 void ata_write28(ata_drive_t* drive, uint32_t sector, char* data, int count) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
 	if (count < 0) {
 		count = strlen(data);
 		
@@ -237,6 +254,11 @@ void ata_write28(ata_drive_t* drive, uint32_t sector, char* data, int count) {
 }
 
 void ata_flush(ata_drive_t* drive) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
 	outportb(drive->device_port, drive->master ? 0xE0 : 0xF0);
 	outportb(drive->command_port, 0xE7);
 	
@@ -247,7 +269,7 @@ void ata_flush(ata_drive_t* drive) {
 		
 	}
 	
-	if(status & 1) {
+	if (status & 1) {
 		printf_warn("ATA Could not detect the device's identity.\n");
 		
 	}
@@ -255,12 +277,19 @@ void ata_flush(ata_drive_t* drive) {
 }
 
 void ata_read28_mul(char* result, ata_drive_t* drive, uint32_t sector) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
 	char* buffer;
 	int i = 0;
 	
 	uint8_t reading = 1;
 	while (reading) {
 		buffer = ata_read28(drive, sector + i, BYTES_PER_SECTOR);
+		buffer[3] = '\0';
+		printf("\t%s\n", buffer);
 		
 		int j;
 		for (j = i * BYTES_PER_SECTOR; j < i * BYTES_PER_SECTOR + BYTES_PER_SECTOR; j++) {
@@ -277,6 +306,11 @@ void ata_read28_mul(char* result, ata_drive_t* drive, uint32_t sector) {
 }
 
 void ata_write28_mul(ata_drive_t* drive, uint32_t sector, char* data) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
 	char buffer[BYTES_PER_SECTOR];
 	int buffer_count = 0;
 	

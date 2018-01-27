@@ -183,8 +183,7 @@ bug: prebuild
 	-rm bug_report.zip
 	
 	$(call echo_colour, "Please enter a breif description of your bug")
-	@read description
-	echo $$description > logs/description.log
+	sh scripts/bug_description.sh
 	
 	mkdir -p logs/extra_info/
 	mkdir -p logs/extra_info/has/

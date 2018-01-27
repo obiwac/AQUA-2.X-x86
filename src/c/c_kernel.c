@@ -195,7 +195,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	if (!startup) goto cmd_line;
 	
 	printf("PC Speaker: Making sure it is set to mute ...\n");
-	pc_speaker_mute();
+	//~ pc_speaker_mute(); /// FIXME
 	
 	detect_cpu:
 	
@@ -263,7 +263,6 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	drive_quaternary_slave = &_drive_quaternary_slave;
 	
 	identify_ata:
-	
 	printf("ATA: Identifying drives ...\n");
 	
 	printf_minor("\tATA: Identifying primary master ...\n");
@@ -286,8 +285,13 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf_minor("\tATA: Identifying quaternary slave ...\n");
 	ata_identify(drive_quaternary_slave);
 	
-	if (ata_current_drive_set) printf("ATA: The selected drive is %s %s.\n", ata_current_drive->name, ata_current_drive->master_name);
-	else printf_warn("ATA: No useable drive was found, so no drives were selected ...\n");
+	if (ata_current_drive_set) {
+		printf("ATA: The selected drive is %s %s.\n", ata_current_drive->name, ata_current_drive->master_name);
+		
+	} else {
+		printf_warn("ATA: No useable drive was found, so no drives were selected ...\n");
+		
+	}
 	
 	if (!startup) goto cmd_line;
 	
@@ -356,6 +360,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	}
 	
 	printf("DE: Entering ...\n");
+	unloading_screen();
 	main();
 	
 	printf("ACPI: Powering off system ...\n");
