@@ -113,12 +113,8 @@ void pci_debug(void) {
 	for (bus = 0; bus < 256; bus++) {
 		for (device = 0; device < 32; device++) {
 			if (get_pci_vendor(bus, device, 0) != 0xFFFF) {
-				printf_minor("\tPCI Found ");
-				
 				uint16_t class_and_sub = pci_read_word(bus, device, 0, 10);
-				print_pci_class_code((uint8_t) (class_and_sub >> 8), (uint8_t) class_and_sub, (uint8_t) (pci_read_word(bus, device, 0, 8) >> 8));
-				
-				printf_minor(" at 0x%x, 0x%x", bus, device);
+				printf_minor("\tPCI Found device (0x%x) at 0x%x, 0x%x", class_and_sub, bus, device);
 				
 				if (((uint8_t) (pci_read_word(bus, device, 0, 14) & 0xFF)) & 0x80 != 0) {
 					printf_minor(" with multiple functions.");
@@ -169,97 +165,13 @@ void pci_analyse(void) {
 				}
 				
 				driver = pci_get_driver(device_descriptor);
+				printf_minor("\tFound === %s === from === %s === ...\n", driver.device_name, driver.vendor_name);
 				
 			}
 			
 		}
 		
 	}
-	
-}
-
-void print_pci_class_code(uint8_t class_code, uint8_t sub_class, uint8_t prog_if) {
-	switch (class_code) {
-		case 0x0: {
-			printf_minor("Device was built prior definition of the class code field");
-			break;
-			
-		} case 0x1: {
-			printf_minor("Mass Storage Controller");
-			break;
-			
-		} case 0x2: {
-			printf_minor("Network Controller");
-			break;
-			
-		} case 0x3: {
-			printf_minor("Display Controller");
-			break;
-			
-		} case 0x4: {
-			printf_minor("Mutimedia Controller");
-			break;
-			
-		} case 0x5: {
-			printf_minor("Memory Controller");
-			break;
-			
-		} case 0x6: {
-			printf_minor("Bridge Device");
-			break;
-			
-		} case 0x7: {
-			printf_minor("Simple Communication Controller");
-			break;
-			
-		} case 0x8: {
-			printf_minor("Base System Peripheral");
-			break;
-			
-		} case 0x9: {
-			printf_minor("Input Device");
-			break;
-			
-		} case 0xA: {
-			printf_minor("Docking Station");
-			break;
-			
-		} case 0xB: {
-			printf_minor("Processor");
-			break;
-			
-		} case 0xC: {
-			printf_minor("Serial Bus Controller");
-			break;
-			
-		} case 0xD: {
-			printf_minor("Wireless Controller");
-			break;
-			
-		} case 0xE: {
-			printf_minor("Intelligent IO Controller");
-			break;
-			
-		} case 0xF: {
-			printf_minor("Satellite Communication Controller");
-			break;
-			
-		} case 0x10: {
-			printf_minor("Encryption Controller");
-			break;
-			
-		} case 0x11: {
-			printf_minor("Data Acquisition and Signal Processing Controller");
-			break;
-			
-		} default: {
-			printf_minor("Other Device (0x%x)", class_code);
-			
-		}
-		
-	}
-	
-	printf_minor(" (Sub 0x%x, 0x%x)", sub_class, prog_if);
 	
 }
 
@@ -346,262 +258,47 @@ pci_bar_t pci_get_bar(uint16_t bus, uint16_t device, uint16_t function, uint16_t
 	
 }
 
+#include "database/vendor_count.h"
+#include "structs.h"
+
+pci_vendor_t* pci_init_database(void);
+
 pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) {
 	pci_driver_descriptor_t result;
+	result.device = device;
 	
-	/*
-	 printf_minor("\t\t detected.\n");
-					result.device_name = "";
-					result.device_type = "";
-					
-					break;*/
+	pci_vendor_t* data = pci_init_database();
 	
-	result.vendor_name = "unknown";
-	result.device_name = "unknown";
-	result.device_type = "unknown";
-	
-	switch (device.vendor_id) {
-		case 0x80EE: {
-			printf_minor("\tOracle vendor detected.\n");
-			result.vendor_name = "Oracle";
-			
-			switch (device.device_id) {
-				case 0xCAFE: {
-					printf_minor("\t\tGuest additions device detected.\n");
-					result.device_name = "Guest additions";
-					result.device_type = "Pseudo";
-					
-					break;
-					
-				} case 0xBEEF: {
-					printf_minor("\t\tVirtualBox graphics adapter device detected.\n");
-					result.device_name = "tVirtualBox graphics adapter";
-					result.device_type = "Pseudo";
-					
-					break;
-					
-				} default: {
-					printf_warn("\t\tUnknown Oracle device detected (0x%x).\n", device.device_id);
-					break;
+	#ifdef PCI_VENDOR_COUNT
+		result.vendor_name = "unknown";
+		result.device_name = "unknown";
+		result.device_type = "unknown";
+		
+		int v;
+		for (v = 0; v < PCI_VENDOR_COUNT; v++) {
+			if (data[v].id == result.device.vendor_id) {
+				result.vendor_name = data[v].name;
+				
+				int p;
+				for (p = 0; p < data[v].product_count; p++) {
+					if (data[v].products[p].id == result.device.device_id) {
+						result.device_name = data[v].products[p].name;
+						break;
+						
+					}
 					
 				}
+				
+				break;
 				
 			}
-			
-			break;
-			
-		} case 0x05AC:
-		case 0x106B: { /// TODO make a cool crash screen
-			printf_error("An Apple device was detected!!! This may harm your system ...\n");
-			result.vendor_name = "Apple";
-			break;
-			
-		} case 0x1022:
-		case 0x1002: {
-			printf_minor("\tAMD vendor detected.\n");
-			result.vendor_name = "AMD";
-			
-			switch (device.device_id) {
-				case 0x2000: {
-					printf_minor("\t\tPCNet network card detected (assuming it's an AM79C973).\n");
-					result.device_name = "AM79C973";
-					result.device_type = "Network Controller";
-					
-					break;
-					
-				} default: {
-					printf_warn("\t\tUnknown AMD device detected (0x%x).\n", device.device_id);
-					break;
-					
-				}
-				
-			}
-			
-			break;
-			
-		} case 0x8087:
-		case 0x8086: {
-			printf_minor("\tIntel vendor detected.\n");
-			result.vendor_name = "Intel";
-			
-			switch (device.device_id) {
-				case 0x1237: {
-					printf_minor("\t\tPCI & Memory device detected.\n");
-					result.device_name = "PCI & Memory";
-					result.device_type = "Memory Controller";
-					
-					break;
-				
-				} case 0x7000: {
-					printf_minor("\t\tPIIX3 PCI-to-ISA Bridge (Triton II) detected.\n");
-					result.device_name = "PIIX3 PCI-to-ISA Bridge (Triton II)";
-					result.device_type = "Bridge Device";
-					
-					break;
-					
-				} case 0x7111: {
-					printf_minor("\t\tIntel(R) 82371AB/EB PCI Bus Master IDE Controller detected.\n");
-					result.device_name = "Intel(R) 82371AB/EB PCI Bus Master IDE Controller";
-					result.device_type = "Mass Storage Controller";
-					
-					break;
-					
-				} case 0x2415: {
-					printf_minor("\t\tAureal (AD1881 SOUNDMAX) Placa Mãe Asaki P3-141 detected.\n");
-					result.device_name = "Aureal (AD1881 SOUNDMAX) Placa Mãe Asaki P3-141";
-					result.device_type = "Multimedia Controller";
-					
-					break;
-					
-				} case 0x7113: {
-					printf_minor("\t\tPIIX4/4E/4M Power Management Controller detected.\n");
-					result.device_name = "PIIX4/4E/4M Power Management Controller";
-					result.device_type = "Base System Peripheral";
-					
-					break;
-					
-				}
-				
-				case 0x1977:
-				case 0x27D8:
-				case 0x0A0C:
-				case 0x0F04:
-				case 0x1C20:
-				case 0x1E20:
-				case 0x3B56:
-				case 0x9C20: {
-					printf_minor("\t\tHigh Definition audio controller card detected.\n");
-					result.device_name = "High Definition";
-					result.device_type = "Multimedia Controller";
-					
-					break;
-					
-				} case 0x2440: {
-					printf_minor("\t\tICH2 audio controller card detected.\n");
-					result.device_name = "ICH2";
-					result.device_type = "Multimedia Controller";
-					
-					break; 
-					
-				} case 0x24D5: {
-					printf_minor("\t\tICH5 audio controller card detected.\n");
-					result.device_name = "ICH5";
-					result.device_type = "Multimedia Controller";
-					
-					break;
-					
-				} case 0x2668:
-				case 0x2678: {
-					printf_minor("\t\tICH6 audio controller card detected.\n");
-					result.device_name = "ICH6";
-					result.device_type = "Multimedia Controller";
-					
-					break;
-					
-				} case 0x27: {
-					printf_minor("\t\tICH7 audio controller card detected.\n");
-					result.device_name = "ICH7";
-					result.device_type = "Multimedia Controller";
-					
-					break;
-					
-				} case 0x293E: {
-					printf_minor("\t\tICH9 audio controller card detected.\n");
-					result.device_name = "ICH9";
-					result.device_type = "Multimedia Controller";
-					
-					break;
-					
-				} default: {
-					printf_warn("\t\tUnknown Intel device detected (0x%x).\n", device.device_id);
-					break;
-					
-				}
-				
-			}
-			
-			break;
-			
-		} case 0x10DE: {
-			printf_minor("\tNVIDIA vendor detected.\n");
-			result.vendor_name = "NVIDIA";
-			
-			switch (device.device_id) {
-				default: {
-					printf_warn("\t\tUnknown NVIDIA device detected (0x%x).\n", device.device_id);
-					break;
-					
-				}
-				
-			}
-			
-			break;
-			
-		} case 0x5143: {
-			printf_minor("\tQualcomm vendor detected.\n");
-			result.vendor_name = "Qualcomm";
-			
-			switch (device.device_id) {
-				default: {
-					printf_warn("\t\tUnknown Qualcomm device detected (0x%x).\n", device.device_id);
-					break;
-					
-				}
-				
-			}
-			
-			break;
-			
-		} case 0x10EC: {
-			printf_minor("\tRealtek vendor detected.\n");
-			result.vendor_name = "Realtek";
-			
-			switch (device.device_id) {
-				default: {
-					printf_warn("\t\tUnknown Realtek device detected (0x%x).\n", device.device_id);
-					break;
-					
-				}
-				
-			}
-			
-			break;
-			
-		} default: {
-			printf_warn("\tUnknown vendor detected (0x%x).\n", device.vendor_id);
-			break;
 			
 		}
-		
-	} switch (device.class_id) {
-		case 0x03: {
-			printf_minor("\tGraphics card detected.\n");
-			result.device_type = "Graphics card";
-			
-			switch (device.subclass_id) {
-				case 0x00: {
-					printf_minor("\t\tVGA graphics card detected.\n");
-					result.device_name = "VGA";
-					
-					break;
-					
-				} default: {
-					printf_warn("\tUnknown graphics card detected (0x%x).\n", device.subclass_id);
-					break;
-					
-				}
-				
-			}
-			
-			break;
-			
-		} default: {
-			//~printf_warn("\tUnknown device class (0x%x).\n", device.class_id);
-			break;
-			
-		}
-		
-	}
+	#else
+		result.vendor_name = "The PCI database was not constructed";
+		result.device_name = "The PCI database was not constructed";
+		result.device_type = "The PCI database was not constructed";
+	#endif
 	
 	return result;
 	

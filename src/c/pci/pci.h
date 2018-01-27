@@ -51,6 +51,8 @@
 	} pci_bar_t;
 	
 	typedef struct {
+		pci_device_descriptor_t device;
+		
 		char* vendor_name;
 		char* device_name;
 		char* device_type;

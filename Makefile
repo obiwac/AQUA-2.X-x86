@@ -96,9 +96,11 @@ clean: prebuild
 	$(RM) aqua/aqua.iso
 	$(RM) aqua/boot/kernel.bin
 
-test: prebuild
+kill-vm: prebuild
 	VBoxManage list runningvms | sed -r 's/.*\{(.*)\}/\1/' | xargs -L1 -I {} VBoxManage controlvm {} poweroff
 	sleep 1
+
+test: kill-vm
 	VBoxManage startvm "AQUA OS" 2>&1 | tee logs/virtualbox.log
 
 main: prebuild
@@ -203,4 +205,4 @@ auto: prebuild
 ultra-clean: clean
 	-rm -rf cross_compiler/
 
-.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean
+.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean kill-vm
