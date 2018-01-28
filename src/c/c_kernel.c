@@ -345,8 +345,9 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 			else if (strcmp(buffer, "ata") == 0) goto identify_ata;
 			else if (strcmp(buffer, "pci") == 0) goto detect_pci;
 			else if (strcmp(buffer, "poweroff") == 0) acpi_poweroff();
+			else if (strcmp(buffer, "reboot") == 0) power_reboot();
 			else if (strcmp(buffer, "aqua") == 0) break;
-			else if (strcmp(buffer, "help") == 0) printf_warn("bda\nint\nmboot\ncpu\nsmbios\nata\npci\n\npoweroff\naqua\nhelp\nlog\n");
+			else if (strcmp(buffer, "help") == 0) printf_warn("bda\nint\nmboot\ncpu\nsmbios\nata\npci\n\npoweroff\nreboot\naqua\nhelp\nlog\n");
 			else printf_error("\"%s\" is unknown ... Type \"help\" for a list of commands.\n", buffer);
 			
 		}
