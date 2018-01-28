@@ -6,6 +6,7 @@
 	#include "../types.h"
 	
 	#include "../string/itoa.h"
+	#include "../string/ftoa.h"
 	#include "../string/strlen.h"
 	#include "../memory/memory.h"
 	

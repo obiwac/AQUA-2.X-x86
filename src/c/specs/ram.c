@@ -13,29 +13,28 @@
 uint64_t ram_max;
 char ram_max_str[16];
 
-extern uint32_t kernel_start_address;
-
 void set_ram_max(uint64_t _int) {
-	_int += kernel_start_address / 0x400;
-	uint32_t int32 = (uint32_t) _int;
+	_int += 0x444;
+	float _float = (float) _int;
 	
-	int int32_compressed = int32 >= 0x400 ? \
-		(int32 / 0x400 > 0x400 ? \
-		(int32 / 0x400 / 0x400 > 0x400 ? \
-		(int32 / 0x400 / 0x400 / 0x400 > 0x400 ? \
+	float float_compressed = _float >= 0x400 ? \
+		(_float / 0x400 > 0x400 ? \
+		(_float / 0x400 / 0x400 > 0x400 ? \
+		(_float / 0x400 / 0x400 / 0x400 > 0x400 ? \
 		\
-		int32 / 0x400 / 0x400 / 0x400 / 0x400 : \
-		int32 / 0x400 / 0x400 / 0x400) : \
-		int32 / 0x400 / 0x400) : \
-		int32 / 0x400) : int32;
+		_float / 0x400 / 0x400 / 0x400 / 0x400 : \
+		_float / 0x400 / 0x400 / 0x400) : \
+		_float / 0x400 / 0x400) : \
+		_float / 0x400) : \
+		_float;
 	
-	char _char = int32 >= 0x400 ? \
-		(int32 / 0x400 > 0x400 ? \
-		(int32 / 0x400 / 0x400 > 0x400 ? \
-		(int32 / 0x400 / 0x400 / 0x400 > 0x400 ? \
+	char _char = _float >= 0x400 ? \
+		(_float / 0x400 > 0x400 ? \
+		(_float / 0x400 / 0x400 > 0x400 ? \
+		(_float / 0x400 / 0x400 / 0x400 > 0x400 ? \
 		'P' : 'T') : 'G') : 'M') : 'K';
 	
-	ram_max = (uint64_t) int32;
-	sprintf(ram_max_str, "%d %cB", int32_compressed, _char);
+	ram_max = (uint64_t) _float;
+	sprintf(ram_max_str, "%d.%d %cB", (uint32_t) float_compressed, (uint32_t) (float_compressed * 10) % 10, _char);
 	
 }

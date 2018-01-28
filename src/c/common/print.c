@@ -39,6 +39,14 @@ void printf_colour(colour_t colour, const char* format, char** arg) {
 					kernel_itoa(buffer, _char, *((int*) arg++));
 					ptr = buffer;
 					goto string;
+					
+					break;
+					
+				} case 'f': {
+					kernel_ftoa(buffer, 2, *((float*) arg++));
+					ptr = buffer;
+					goto string;
+					
 					break;
 					
 				} case 's': {

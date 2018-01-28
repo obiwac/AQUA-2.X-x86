@@ -28,6 +28,13 @@ int sprintf(char* string, const char* format, ...) {
 					goto string;
 					break;
 					
+				} case 'f': {
+					kernel_ftoa(buffer, 2, *((float*) arg++));
+					ptr = buffer;
+					goto string;
+					
+					break;
+					
 				} case 's': {
 					ptr = *arg++;
 					
