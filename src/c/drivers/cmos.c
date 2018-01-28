@@ -88,15 +88,16 @@ void cmos_read_rtc_event(int ms) {
 	register_b = cmos_get_rtc_register(0x0B);
 	
 	if (!(register_b & 0x04)) {
-		cmos_second = (cmos_second & 0x0F) + ((cmos_second / 16) * 10);
-		cmos_minute = (cmos_minute & 0x0F) + ((cmos_minute / 16) * 10);
-		cmos_hour = ((cmos_hour & 0x0F) + (((cmos_hour & 0x70) / 16) * 10)) | (cmos_hour & 0x80);
+		cmos_second = (cmos_second & 0x0F) + ((cmos_second / 0xF) * 10);
+		cmos_minute = (cmos_minute & 0x0F) + ((cmos_minute / 0xF) * 10);
+		cmos_hour = ((cmos_hour & 0x0F) + (((cmos_hour & 0x70) / 0xF) * 10)) | (cmos_hour & 0x80);
 		
-		cmos_month = (cmos_month & 0x0F) + ((cmos_month / 16) * 10);
-		cmos_year = (cmos_year & 0x0F) + ((cmos_year / 16) * 10);
+		cmos_day = (cmos_day & 0x0F) + ((cmos_day / 0xF) * 10);
+		cmos_month = (cmos_month & 0x0F) + ((cmos_month / 0xF) * 10);
+		cmos_year = (cmos_year & 0x0F) + ((cmos_year / 0xF) * 10);
 		
 		if (century_register != 0) {
-			cmos_century = (cmos_century & 0x0F) + ((cmos_century / 16) * 10);
+			cmos_century = (cmos_century & 0x0F) + ((cmos_century / 0xF) * 10);
 			
 		}
 		
@@ -111,7 +112,7 @@ void cmos_read_rtc_event(int ms) {
 		cmos_year += cmos_century * 100;
 		
 	} else {
-		cmos_year += (__AQUA__CURRENT_YEAR / 100) * 100;
+		//~ cmos_year += (__AQUA__CURRENT_YEAR / 100) * 100; /// FIXME ???
 		
 		if (cmos_year < __AQUA__CURRENT_YEAR) {
 			cmos_year += 100;

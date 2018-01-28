@@ -55,7 +55,7 @@ unsigned char time_minutes(void) {
 
 unsigned char time_hours(void) {
 	update_time();
-	return cmos_hour;
+	return cmos_hour + 1;
 	
 }
 
