@@ -5,7 +5,7 @@ OUTPUT_ARCH(i386:i386)
 
 SECTIONS {
 	. = 0xC000000;
-	krnlstart = .;
+	kernel_start_address = .;
 	
 	.text : AT(ADDR(.text) - 0x00000000) {
 		*(.text)
@@ -28,9 +28,9 @@ SECTIONS {
 		
 	}
 	
-	end = .;
-	_end = .;
-	__end = .;
+	kernel_end_address = .;
+	_kernel_end_address = .;
+	__kernel_end_address = .;
 	
 	/DISCARD/ : {
 		*(.fini_array*)
