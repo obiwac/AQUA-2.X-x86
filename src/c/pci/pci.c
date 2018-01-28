@@ -279,7 +279,24 @@ static pci_vendor_t* data;
 #define PCI_SET_GRAPHICS 2
 #define PCI_SET_SOUND 3
 
+static pci_driver_descriptor_t ohci_controller;
+static pci_driver_descriptor_t uhci_controller;
+static pci_driver_descriptor_t ehci_controller;
+static pci_driver_descriptor_t xhci_controller;
+
+static uint8_t pci_init_phase = 1;
+
 pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TODO device.subclass_id & device.interface_id
+	if (pci_init_phase) {
+		pci_init_phase = 0;
+		
+		ohci_controller.unknown = 1;
+		uhci_controller.unknown = 1;
+		ehci_controller.unknown = 1;
+		xhci_controller.unknown = 1;
+		
+	}
+	
 	pci_driver_descriptor_t result = {
 		.unknown = 0,
 		.device = device
@@ -292,7 +309,10 @@ pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TOD
 	#ifdef PCI_VENDOR_COUNT
 		result.vendor_name = "unknown";
 		result.device_name = "unknown";
+		
 		result.device_type = "unknown";
+		result.device_subtype = "unknown";
+		result.device_interface_type = "unknown";
 		
 		int v;
 		for (v = 0; v < PCI_VENDOR_COUNT; v++) {
@@ -331,8 +351,57 @@ pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TOD
 							case PCI_CLASS_INPUT_DEVICE: result.device_type = "input device"; break;
 							case PCI_CLASS_DOCKING_STATION: result.device_type = "docking station"; break;
 							case PCI_CLASS_PROCESSOR: result.device_type = "processor"; break;
-							case PCI_CLASS_SERIAL_BUS_CONTROLLER: result.device_type = "serial bus controller"; break;
-							case PCI_CLASS_WIRELESS_CONTROLLER: result.device_type = "wireless controller"; break;
+							
+							case PCI_CLASS_SERIAL_BUS_CONTROLLER: {
+								result.device_type = "serial bus controller";
+								
+								switch (result.device.subclass_id) {
+									case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER: {
+										result.device_subtype = "usb controller";
+										
+										switch (result.device.interface_id) {
+											case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_OPEN_HOST_CONTROLLER_SPEC: {
+												result.device_interface_type = "ohci";
+												ohci_controller = result;
+												
+												break;
+												
+											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_UNIVERSAL_HOST_CONTROLLER_SPEC: {
+												result.device_interface_type = "uhci";
+												uhci_controller = result;
+												
+												break;
+												
+											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_USB2_HOST_CONTROLLER_INTEL_ENHANCED_HOST_CONTROLLER_INTERFACE: {
+												result.device_interface_type = "ehci";
+												ehci_controller = result;
+												
+												break;
+												
+											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_USB3_XHCI_CONTROLLER: {
+												result.device_interface_type = "xhci";
+												xhci_controller = result;
+												
+											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_USB_UNSPECIFIED_CONTROLLER:
+											default: {
+												break;
+												
+											}
+											
+										}
+										
+										break;
+										
+									} default: {
+										break;
+										
+									}
+									
+								}
+								
+								break;
+								
+							} case PCI_CLASS_WIRELESS_CONTROLLER: result.device_type = "wireless controller"; break;
 							case PCI_CLASS_INTELLIGENT_IO_CONTROLLER: result.device_type = "intelligent I/O controller"; break;
 							case PCI_CLASS_SATELLITE_COMMUNICATION_CONTROLLER: result.device_type = "satellite controller"; break;
 							case PCI_CLASS_ENCRYPTION_CONTROLLER: result.device_type = "encryption controller"; break;
@@ -407,4 +476,7 @@ pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TOD
 	
 }
 
-
+pci_driver_descriptor_t pci_find_ohci_controller(void) { return ohci_controller; }
+pci_driver_descriptor_t pci_find_uhci_controller(void) { return uhci_controller; }
+pci_driver_descriptor_t pci_find_ehci_controller(void) { return ehci_controller; }
+pci_driver_descriptor_t pci_find_xhci_controller(void) { return xhci_controller; }

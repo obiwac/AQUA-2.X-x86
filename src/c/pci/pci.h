@@ -56,7 +56,10 @@
 		
 		char* vendor_name;
 		char* device_name;
+		
 		char* device_type;
+		char* device_subtype;
+		char* device_interface_type;
 		
 	} pci_driver_descriptor_t;
 	
@@ -82,5 +85,10 @@
 	pci_device_descriptor_t pci_get_device_descriptor(uint16_t bus, uint16_t device, uint16_t function);
 	pci_bar_t pci_get_bar(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar);
 	pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device);
+	
+	pci_driver_descriptor_t pci_find_ohci_controller(void);
+	pci_driver_descriptor_t pci_find_uhci_controller(void);
+	pci_driver_descriptor_t pci_find_ehci_controller(void);
+	pci_driver_descriptor_t pci_find_xhci_controller(void);
 	
 #endif

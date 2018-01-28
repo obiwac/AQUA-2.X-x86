@@ -29,6 +29,9 @@
 #include "drivers/lpt.h"
 
 #include "drivers/ata/ata.h"
+#include "drivers/ata/atapi.h"
+
+#include "drivers/usb/usb.h"
 
 #include "cpu/cpuid.h"
 #include "cpu/rdtsc.h"
@@ -324,6 +327,80 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	else printf_minor("\tNetworking card: %s from %s\n", pci_networking_card_device_name, pci_networking_card_vendor_name);
 	
 	if (!startup) goto cmd_line;
+	usb:
+	
+	printf("USB: Finding USB controller PCI device ...\n");
+	
+	ohci_controller_device = pci_find_ohci_controller();
+	uhci_controller_device = pci_find_uhci_controller();
+	ehci_controller_device = pci_find_ehci_controller();
+	xhci_controller_device = pci_find_xhci_controller();
+	
+	if (ohci_controller_device.unknown) printf_warn("\tWARNING No OHCI controller was found.\n");
+	else printf_minor("\tUSB: Found OHCI controller %s from %s ...\n", ohci_controller_device.device_name, ohci_controller_device.vendor_name);
+	
+	if (uhci_controller_device.unknown) printf_warn("\tWARNING No UHCI controller was found.\n");
+	else printf_minor("\tUSB: Found UHCI controller %s from %s ...\n", uhci_controller_device.device_name, uhci_controller_device.vendor_name);
+	
+	if (ehci_controller_device.unknown) printf_warn("\tWARNING No EHCI controller was found.\n");
+	else printf_minor("\tUSB: Found EHCI controller %s from %s ...\n", ehci_controller_device.device_name, ehci_controller_device.vendor_name);
+	
+	if (xhci_controller_device.unknown) printf_warn("\tWARNING No XHCI controller was found.\n");
+	else printf_minor("\tUSB: Found XHCI controller %s from %s ...\n", xhci_controller_device.device_name, xhci_controller_device.vendor_name);
+	
+	switch (usb_calculate_max_spec()) {
+		case USB_VERSION_1_0: {
+			printf("USB: You computer supports USB 1.0.\n");
+			break;
+			
+		} case USB_VERSION_1_1: {
+			printf("USB: You computer supports USB 1.1.\n");
+			break;
+			
+		} case USB_VERSION_2_0: {
+			printf("USB: You computer supports USB 2.0.\n");
+			break;
+			
+		} case USB_VERSION_3_0: {
+			printf("USB: You computer supports USB 3.0.\n");
+			break;
+			
+		} case USB_VERSION_NONE:
+		default: {
+			printf_warn("WARNING Your computer does not support USB.\n");
+			break;
+			
+		}
+		
+	}
+	
+	if (!startup) goto cmd_line;
+	
+	printf("USB: Initializing ...\n");
+	
+	if (!ohci_controller_device.unknown) {
+		printf_minor("\tOHCI: Initializing ...\n");
+		ohci_controller_init();
+		
+	}
+	
+	if (!uhci_controller_device.unknown) {
+		printf_minor("\tUHCI: Initializing ...\n");
+		uhci_controller_init();
+		
+	}
+	
+	if (!ehci_controller_device.unknown) {
+		printf_minor("\tEHCI: Initializing ...\n");
+		ehci_controller_init();
+		
+	}
+	
+	if (!xhci_controller_device.unknown) {
+		printf_minor("\tXHCI: Initializing ...\n");
+		xhci_controller_init();
+		
+	}
 	
 	if (!BOOT_AQUA) {
 		char buffer[32];
@@ -344,10 +421,12 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 			else if (strcmp(buffer, "smbios") == 0) goto smbios;
 			else if (strcmp(buffer, "ata") == 0) goto identify_ata;
 			else if (strcmp(buffer, "pci") == 0) goto detect_pci;
+			else if (strcmp(buffer, "usb") == 0) goto usb;
+			
 			else if (strcmp(buffer, "poweroff") == 0) acpi_poweroff();
 			else if (strcmp(buffer, "reboot") == 0) power_reboot();
 			else if (strcmp(buffer, "aqua") == 0) break;
-			else if (strcmp(buffer, "help") == 0) printf_warn("bda\nint\nmboot\ncpu\nsmbios\nata\npci\n\npoweroff\nreboot\naqua\nhelp\nlog\n");
+			else if (strcmp(buffer, "help") == 0) printf_warn("bda\nint\nmboot\ncpu\nsmbios\nata\npci\nusb\n\npoweroff\nreboot\naqua\nhelp\nlog\n");
 			else printf_error("\"%s\" is unknown ... Type \"help\" for a list of commands.\n", buffer);
 			
 		}

@@ -141,7 +141,9 @@ endif
 		--cableconnected1 on \
 		\
 		--uart1 0x3F8 4 \
-		--uartmode1 file logs/serial.log
+		--uartmode1 file logs/serial.log \
+		\
+		--usb on
 	
 	VBoxManage createhd --filename "virtualbox/AQUA Harddrive" --size 2048
 	VBoxManage storagectl "AQUA OS" --add ide --name "IDE"
