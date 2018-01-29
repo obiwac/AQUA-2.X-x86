@@ -31,7 +31,7 @@
 #include "drivers/ata/ata.h"
 #include "drivers/ata/atapi.h"
 
-#include "drivers/usb/usb.h"
+#include "usb/usb.h"
 
 #include "cpu/cpuid.h"
 #include "cpu/rdtsc.h"

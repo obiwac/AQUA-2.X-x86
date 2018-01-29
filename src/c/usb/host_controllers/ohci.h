@@ -32,6 +32,12 @@
 	#define OHCI_ROOT_STATUS 0x50
 	#define OHCI_ROOT_PORTS 0x54
 	
+	typedef struct ohci_list_entry_s {
+		struct ohci_list_entry_s* b_link;
+		struct ohci_list_entry_s* f_link;
+		
+	} __attribute__((packed)) ohci_list_entry_t;
+	
 	void ohci_controller_init(void);
 	
 #endif
