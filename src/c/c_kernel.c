@@ -331,22 +331,57 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	printf("USB: Finding USB controller PCI device ...\n");
 	
-	ohci_controller_device = pci_find_ohci_controller();
-	uhci_controller_device = pci_find_uhci_controller();
-	ehci_controller_device = pci_find_ehci_controller();
-	xhci_controller_device = pci_find_xhci_controller();
+	if (ohci_controller[0].unknown) {
+		printf_warn("\tWARNING No OHCI controller was found.\n");
+		
+	} else {
+		printf_minor("\tUSB: Found %d OHCI controllers.\n", ohci_controller_count);
+		
+		for (i = 0; i < ohci_controller_count; i++) {
+			printf_minor("\t\tOHCI: Found OHCI controller %s from %s.\n", ohci_controller[i].device_name, ohci_controller[i].vendor_name);
+			
+		}
+		
+	}
 	
-	if (ohci_controller_device.unknown) printf_warn("\tWARNING No OHCI controller was found.\n");
-	else printf_minor("\tUSB: Found OHCI controller %s from %s ...\n", ohci_controller_device.device_name, ohci_controller_device.vendor_name);
+	if (uhci_controller[0].unknown) {
+		printf_warn("\tWARNING No UHCI controller was found.\n");
+		
+	} else {
+		printf_minor("\tUSB: Found %d UHCI controllers.\n", uhci_controller_count);
+		
+		for (i = 0; i < uhci_controller_count; i++) {
+			printf_minor("\t\tUHCI: Found UHCI controller %s from %s.\n", uhci_controller[i].device_name, uhci_controller[i].vendor_name);
+			
+		}
+		
+	}
 	
-	if (uhci_controller_device.unknown) printf_warn("\tWARNING No UHCI controller was found.\n");
-	else printf_minor("\tUSB: Found UHCI controller %s from %s ...\n", uhci_controller_device.device_name, uhci_controller_device.vendor_name);
+	if (ehci_controller[0].unknown) {
+		printf_warn("\tWARNING No EHCI controller was found.\n");
+		
+	} else {
+		printf_minor("\tUSB: Found %d EHCI controllers.\n", ehci_controller_count);
+		
+		for (i = 0; i < ehci_controller_count; i++) {
+			printf_minor("\t\tEHCI: Found EHCI controller %s from %s.\n", ehci_controller[i].device_name, ehci_controller[i].vendor_name);
+			
+		}
+		
+	}
 	
-	if (ehci_controller_device.unknown) printf_warn("\tWARNING No EHCI controller was found.\n");
-	else printf_minor("\tUSB: Found EHCI controller %s from %s ...\n", ehci_controller_device.device_name, ehci_controller_device.vendor_name);
-	
-	if (xhci_controller_device.unknown) printf_warn("\tWARNING No XHCI controller was found.\n");
-	else printf_minor("\tUSB: Found XHCI controller %s from %s ...\n", xhci_controller_device.device_name, xhci_controller_device.vendor_name);
+	if (xhci_controller[0].unknown) {
+		printf_warn("\tWARNING No XHCI controller was found.\n");
+		
+	} else {
+		printf_minor("\tUSB: Found %d XHCI controllers.\n", xhci_controller_count);
+		
+		for (i = 0; i < xhci_controller_count; i++) {
+			printf_minor("\t\tXHCI: Found XHCI controller %s from %s.\n", xhci_controller[i].device_name, xhci_controller[i].vendor_name);
+			
+		}
+		
+	}
 	
 	switch (usb_calculate_max_spec()) {
 		case USB_VERSION_1_0: {
@@ -378,25 +413,25 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	printf("USB: Initializing ...\n");
 	
-	if (!ohci_controller_device.unknown) {
+	if (!ohci_controller[0].unknown) {
 		printf_minor("\tOHCI: Initializing ...\n");
 		ohci_controller_init();
 		
 	}
 	
-	if (!uhci_controller_device.unknown) {
+	if (!uhci_controller[0].unknown) {
 		printf_minor("\tUHCI: Initializing ...\n");
 		uhci_controller_init();
 		
 	}
 	
-	if (!ehci_controller_device.unknown) {
+	if (!ehci_controller[0].unknown) {
 		printf_minor("\tEHCI: Initializing ...\n");
 		ehci_controller_init();
 		
 	}
 	
-	if (!xhci_controller_device.unknown) {
+	if (!xhci_controller[0].unknown) {
 		printf_minor("\tXHCI: Initializing ...\n");
 		xhci_controller_init();
 		

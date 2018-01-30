@@ -279,21 +279,44 @@ static pci_vendor_t* data;
 #define PCI_SET_GRAPHICS 2
 #define PCI_SET_SOUND 3
 
-static pci_driver_descriptor_t ohci_controller;
-static pci_driver_descriptor_t uhci_controller;
-static pci_driver_descriptor_t ehci_controller;
-static pci_driver_descriptor_t xhci_controller;
-
 static uint8_t pci_init_phase = 1;
+
+static uint8_t ohci_controller_count_old;
+static uint8_t uhci_controller_count_old;
+static uint8_t ehci_controller_count_old;
+static uint8_t xhci_controller_count_old;
 
 pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TODO device.subclass_id & device.interface_id
 	if (pci_init_phase) {
 		pci_init_phase = 0;
 		
-		ohci_controller.unknown = 1;
-		uhci_controller.unknown = 1;
-		ehci_controller.unknown = 1;
-		xhci_controller.unknown = 1;
+		ohci_controller_count = 0;
+		uhci_controller_count = 0;
+		ehci_controller_count = 0;
+		xhci_controller_count = 0;
+		
+		ohci_controller_count_old = 1;
+		uhci_controller_count_old = 1;
+		ehci_controller_count_old = 1;
+		xhci_controller_count_old = 1;
+		
+	}
+	
+	if (ohci_controller_count != ohci_controller_count_old) {
+		ohci_controller[ohci_controller_count].unknown = 1;
+		ohci_controller_count_old = ohci_controller_count;
+		
+	} if (uhci_controller_count != uhci_controller_count_old) {
+		uhci_controller[uhci_controller_count].unknown = 1;
+		uhci_controller_count_old = uhci_controller_count;
+		
+	} if (ehci_controller_count != ehci_controller_count_old) {
+		ehci_controller[ehci_controller_count].unknown = 1;
+		ehci_controller_count_old = ehci_controller_count;
+		 
+	} if (xhci_controller_count != xhci_controller_count_old) {
+		xhci_controller[xhci_controller_count].unknown = 1;
+		xhci_controller_count_old = xhci_controller_count;
 		
 	}
 	
@@ -362,25 +385,25 @@ pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TOD
 										switch (result.device.interface_id) {
 											case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_OPEN_HOST_CONTROLLER_SPEC: {
 												result.device_interface_type = "ohci";
-												ohci_controller = result;
+												ohci_controller[ohci_controller_count++] = result;
 												
 												break;
 												
 											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_UNIVERSAL_HOST_CONTROLLER_SPEC: {
 												result.device_interface_type = "uhci";
-												uhci_controller = result;
+												uhci_controller[uhci_controller_count++] = result;
 												
 												break;
 												
 											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_USB2_HOST_CONTROLLER_INTEL_ENHANCED_HOST_CONTROLLER_INTERFACE: {
 												result.device_interface_type = "ehci";
-												ehci_controller = result;
+												ehci_controller[ehci_controller_count++] = result;
 												
 												break;
 												
 											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_USB3_XHCI_CONTROLLER: {
 												result.device_interface_type = "xhci";
-												xhci_controller = result;
+												xhci_controller[xhci_controller_count++] = result;
 												
 											} case PCI_CLASS_SERIAL_BUS_CONTROLLER_USB_CONTROLLER_USB_UNSPECIFIED_CONTROLLER:
 											default: {
@@ -475,8 +498,3 @@ pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device) { /// TOD
 	return result;
 	
 }
-
-pci_driver_descriptor_t pci_find_ohci_controller(void) { return ohci_controller; }
-pci_driver_descriptor_t pci_find_uhci_controller(void) { return uhci_controller; }
-pci_driver_descriptor_t pci_find_ehci_controller(void) { return ehci_controller; }
-pci_driver_descriptor_t pci_find_xhci_controller(void) { return xhci_controller; }

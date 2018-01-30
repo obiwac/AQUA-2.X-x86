@@ -86,9 +86,18 @@
 	pci_bar_t pci_get_bar(uint16_t bus, uint16_t device, uint16_t function, uint16_t bar);
 	pci_driver_descriptor_t pci_get_driver(pci_device_descriptor_t device);
 	
-	pci_driver_descriptor_t pci_find_ohci_controller(void);
-	pci_driver_descriptor_t pci_find_uhci_controller(void);
-	pci_driver_descriptor_t pci_find_ehci_controller(void);
-	pci_driver_descriptor_t pci_find_xhci_controller(void);
+	// USB stuff
+	
+	#define MAX_USB_CONTROLLER_COUNT 16
+	
+	uint8_t ohci_controller_count;
+	uint8_t uhci_controller_count;
+	uint8_t ehci_controller_count;
+	uint8_t xhci_controller_count;
+	
+	pci_driver_descriptor_t ohci_controller[MAX_USB_CONTROLLER_COUNT];
+	pci_driver_descriptor_t uhci_controller[MAX_USB_CONTROLLER_COUNT];
+	pci_driver_descriptor_t ehci_controller[MAX_USB_CONTROLLER_COUNT];
+	pci_driver_descriptor_t xhci_controller[MAX_USB_CONTROLLER_COUNT];
 	
 #endif
