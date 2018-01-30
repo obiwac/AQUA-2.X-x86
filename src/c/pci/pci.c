@@ -27,6 +27,20 @@ uint32_t pci_read_dword(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset)
 	
 }
 
+void pci_write_word(uint16_t bus, uint16_t slot, uint16_t func, uint16_t offset, uint16_t data) {
+	uint32_t address = pci_make_addr(bus, slot, func, offset);
+	outportw(PCI_DATA_PORT, address);
+	outportw(PCI_COMMAND_PORT, data);
+	
+}
+
+void pci_write_dword(uint16_t bus, uint16_t slot, uint16_t func, uint16_t offset, uint32_t data) {
+	uint32_t address = pci_make_addr(bus, slot, func, offset);
+	outportd(PCI_DATA_PORT, address);
+	outportd(PCI_COMMAND_PORT, data);
+	
+}
+
 uint16_t get_pci_vendor(uint8_t bus, uint8_t slot, uint8_t function) {
 	uint16_t vendor = pci_read_word(bus, slot, function, 0);
 	uint16_t device;

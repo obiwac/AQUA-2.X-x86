@@ -206,4 +206,7 @@ auto: prebuild
 ultra-clean: clean
 	-rm -rf cross_compiler/
 
-.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean kill-vm
+flash: all
+	sudo dd if=aqua/aqua.iso of=/dev/sdb
+
+.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean kill-vm flash

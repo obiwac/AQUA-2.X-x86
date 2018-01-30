@@ -69,7 +69,7 @@
 	#define OHCI_MAX_WAITS 16384
 	
 	typedef struct {
-		
+		uint8_t* device_addresses;
 		
 	} ohci_controller_t;
 	

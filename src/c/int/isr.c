@@ -42,194 +42,194 @@ void isr_install(void) {
 
 void isr0(void) {
 	printf("%s\n", exception_messages[0]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 		
 }
 
 void isr1(void) {
 	printf("%s\n", exception_messages[1]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr2(void) {
 	printf("%s\n", exception_messages[2]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr3(void) {
 	printf("%s\n", exception_messages[3]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr4(void) {
 	printf("%s\n", exception_messages[4]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr5(void) {
 	printf("%s\n", exception_messages[5]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr6(void) {
 	printf("%s\n", exception_messages[6]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr7(void) {
 	printf("%s\n", exception_messages[7]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr8(void) {
 	printf("%s\n", exception_messages[8]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr9(void) {
 	printf("%s\n", exception_messages[9]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr10(void) {
 	printf("%s\n", exception_messages[10]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr11(void) {
 	printf("%s\n", exception_messages[11]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr12(void) {
 	printf("%s\n", exception_messages[12]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr13(void) {
 	printf("%s\n", exception_messages[13]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr14(void) {
 	printf("%s\n", exception_messages[14]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr15(void) {
 	printf("%s\n", exception_messages[15]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr16(void) {
 	printf("%s\n", exception_messages[16]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr17(void) {
 	printf("%s\n", exception_messages[17]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr18(void) {
 	printf("%s\n", exception_messages[18]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr19(void) {
 	printf("%s\n", exception_messages[19]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr20(void) {
 	printf("%s\n", exception_messages[20]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr21(void) {
 	printf("%s\n", exception_messages[21]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr22(void) {
 	printf("%s\n", exception_messages[22]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr23(void) {
 	printf("%s\n", exception_messages[23]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr24(void) {
 	printf("%s\n", exception_messages[24]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr25(void) {
 	printf("%s\n", exception_messages[25]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr26(void) {
 	printf("%s\n", exception_messages[26]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr27(void) {
 	printf("%s\n", exception_messages[27]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr28(void) {
 	printf("%s\n", exception_messages[28]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr29(void) {
 	printf("%s\n", exception_messages[29]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr30(void) {
 	printf("%s\n", exception_messages[30]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
 void isr31(void) {
 	printf("%s\n", exception_messages[31]);
-	hang();
+	__asm__ volatile ("hlt");
 	
 }
 
@@ -255,12 +255,12 @@ char* exception_messages[32] = {
 	"Coprocessor Fault",
 	"Alignment Check",
 	"Machine Check",
-	"Reserved",
-	"Reserved",
-	"Reserved",
-	"Reserved",
-	"Reserved",
 	
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
+	"Reserved",
 	"Reserved",
 	"Reserved",
 	"Reserved",

@@ -10,6 +10,8 @@
 	#define PCI_DATA_PORT 0xCFC//0xCF8 // PCI_CONFIG_ADDRESS
 	#define PCI_COMMAND_PORT 0xCF8//0xCFC // PCI_CONFIG_DATA
 	
+	#define PCI_STATUS_COMMAND 0x04
+	
 	typedef struct {
 		uint8_t bus;
 		uint8_t slot;
@@ -65,6 +67,9 @@
 	
 	uint16_t pci_read_word(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset);
 	uint32_t pci_read_dword(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset);
+	
+	void pci_write_word(uint16_t bus, uint16_t slot, uint16_t func, uint16_t offset, uint16_t data);
+	void pci_write_dword(uint16_t bus, uint16_t slot, uint16_t func, uint16_t offset, uint32_t data);
 	
 	uint16_t get_pci_vendor(uint8_t bus, uint8_t slot, uint8_t function);
 	pci_device_t get_pci_device(uint8_t tclass, uint8_t tsub_class, uint8_t tprog_if);

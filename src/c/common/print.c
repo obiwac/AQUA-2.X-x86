@@ -5,7 +5,7 @@ unsigned char print_force_serial = 0;
 
 static void print_char(char _char, colour_t colour) {
 	if (VGA_TEXT) print_char_vga_text(_char, colour_compress_4bit(colour));
-	if (print_force_serial || (SERIAL_OUTPUT && /*!video_type*/ 1)) write_serial(_char);
+	if (print_force_serial) write_serial(_char);
 
 }
 

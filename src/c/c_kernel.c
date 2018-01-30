@@ -439,12 +439,14 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	if (!BOOT_AQUA) {
 		char buffer[32];
+		int j;
+		
 		cmd_line:
 		startup = 0;
 		
 		while (1) {
 			printf("> ");
-			buffer[0] = 0;
+			memset(buffer, '\0', 32);
 			basic_scan(buffer);
 			printf("\n");
 			
@@ -462,6 +464,8 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 			else if (strcmp(buffer, "reboot") == 0) power_reboot();
 			else if (strcmp(buffer, "aqua") == 0) break;
 			else if (strcmp(buffer, "help") == 0) printf_warn("bda\nint\nmboot\ncpu\nsmbios\nata\npci\nusb\n\npoweroff\nreboot\naqua\nhelp\nlog\n");
+			//~ else if (strcmp(buffer, "d0") == 0) j = 10 / 0;
+			
 			else printf_error("\"%s\" is unknown ... Type \"help\" for a list of commands.\n", buffer);
 			
 		}
