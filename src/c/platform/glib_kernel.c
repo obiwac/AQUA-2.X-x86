@@ -4,7 +4,7 @@
 #include "../drivers/power/acpi.h"
 
 #include "memory.h"
-#include "cursor.h"
+#include "res/cursor.h"
 
 typedef struct {
 	int w;
@@ -74,6 +74,18 @@ int glib_get_pitch(void) {
 
 static unsigned char cursor_temp[MOUSE_CURSOR_LENGTH * 4];
 static unsigned int cursor_temp_offsets[MOUSE_CURSOR_LENGTH];
+
+void glib_invert_cursor(void) { /// THIS IS ONLY EXISTANT IN THE KERNEL COMPAT_WRAPPER, THUS IT SHOULD NEIGH BE USED (dont even include it in prototypes.h)
+	int i;
+	for (i = 0; i < MOUSE_CURSOR_LENGTH; i++) {
+		if (i % 4 < 3) {
+			mouse_cursor[i] = ~mouse_cursor[i];
+			
+		}
+		
+	}
+	
+}
 
 void glib_update(void) {
 	unsigned char* uc_pixels = (unsigned char*) glib_screen_surface->pixels;

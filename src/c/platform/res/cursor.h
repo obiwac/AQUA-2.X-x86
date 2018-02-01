@@ -1,8 +1,8 @@
 
-#ifndef __AQUA__PLATFORM_CURSOR_H
-	#define __AQUA__PLATFORM_CURSOR_H
+#ifndef __AQUA__PLATFORM_RES_CURSOR_H
+	#define __AQUA__PLATFORM_RES_CURSOR_H
 	
-	#include "../types.h"
+	#include "../../types.h"
 	
 	#define MOUSE_CURSOR_LENGTH 1024
 	
