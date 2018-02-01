@@ -5,8 +5,8 @@
 	#include "../types.h"
 	#include "../common/print.h"
 	
-	#define MAX_HEAP_SPACE 0xFFFFFF
-	#define MAX_FRAMES 0xFFFFF // 0x2000
+	#define MAX_HEAP_SPACE 0xFFFFFFF
+	#define MAX_FRAMES 0xFFFFFFF // 0x2000
 	
 	typedef struct {
 		uint32_t num;

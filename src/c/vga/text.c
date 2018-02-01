@@ -83,8 +83,8 @@ void vga_printch(char c, char colour) {
 			
 			break;
 			
-		} case 0x09: {
-			cursor_x = (cursor_x + 8) & ~(8 - 1);
+		} case '\t': {
+			cursor_x = (cursor_x + 4) & ~(4 - 1);
 			break;
 			
 		} case '\r': {

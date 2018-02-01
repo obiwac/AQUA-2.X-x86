@@ -101,6 +101,7 @@ kill-vm: prebuild
 	sleep 1
 
 test: kill-vm
+	-rm logs/serial.log
 	VBoxManage startvm "AQUA OS" 2>&1 | tee logs/virtualbox.log
 
 main: prebuild
@@ -207,6 +208,7 @@ ultra-clean: clean
 	-rm -rf cross_compiler/
 
 flash: all
-	sudo dd if=aqua/aqua.iso of=/dev/sdb
+	$(call echo_colour, "WARNING This is a dangerous command. Only run this if you know what you are doing ...")
+	sh scripts/flash.sh 2>&1 logs/flash.log
 
 .PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean kill-vm flash

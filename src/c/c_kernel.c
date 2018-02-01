@@ -16,6 +16,7 @@
 #include "specs/version.h" /// REMME
 #include "specs/help.h" /// REMME
 #include "specs/pci.h"
+#include "specs/usb.h"
 
 #include "drivers/power/acpi.h"
 #include "drivers/power/shutdown.h"
@@ -69,12 +70,13 @@ static uint8_t startup = 1;
 static uint8_t BOOT_AQUA = 1;
 
 static uint8_t print_force_serial_de = 0;
+static uint8_t no_irq = 0;
 
 void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("Awaiting kernel boot keypress ...\n");
 	
 	int i;
-	for (i = 0; i < 0xFFFFF; i++) {
+	for (i = 0; i < 0xFFFFF; i++) { /// TODO read BDA keyboard buffer instead
 		if (inportb(0x64) & 1) {
 			switch (inportb(0x60)) {
 				case 49: {
@@ -102,6 +104,12 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 				} case 46: {
 					printf_warn("Forcing serial output in the DE ...\n");
 					print_force_serial_de = 1;
+					
+					break;
+					
+				} case 18: {
+					printf_warn("Booting without enabling IRQs ...\n");
+					no_irq = 1;
 					
 					break;
 					
@@ -138,7 +146,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	pit_install();
 	
 	printf_minor("\tInterrupts: Installing keyboard on IRQ1 ...\n");
-	if (BOOT_AQUA) keyboard_install();
+	if (BOOT_AQUA && !no_irq) keyboard_install();
 	
 	printf_minor("\tInterrupts: Installing serial COM on IRQ3 and IRQ4 ...\n");
 	serial_install();
@@ -174,13 +182,13 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	__asm__ __volatile__ ("sti");
 	
 	printf("PIT: Setting phase to 1000Hz ...\n");
-	pit_phase(1000);
+	//~ pit_phase(1000); /// TODO
 	
 	if (BOOT_AQUA) {
 		printf("Loading: Showing loading screen ...\n");
 		printf("CPU Speed: Setting CPU speed to the time it takes for the loading screen to load ...\n");
 		
-		cpu_speed = show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc);
+		cpu_speed = show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc) * (uint32_t) (1000 / 18.22);
 		printf("Loading: Showed loading screen in %dms.\n", cpu_speed);
 		
 	} else {
@@ -213,10 +221,11 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("CPU: Benchmarking the CPU speed without interrupts (~ %d Hz).\n", cpu_detect_speed_noint());
 	
 	if (!startup) goto cmd_line;
+	char* smbios_entry_ptr;
 	smbios:
 	
 	printf("SMBIOS: Detecting SMBIOS ...\n");
-	char* smbios_entry_ptr = smbios_entry();
+	if (startup) smbios_entry_ptr = smbios_entry();
 	
 	if (smbios_entry_ptr) {
 		printf_minor("\tSMBIOS exists at 0x%x.\n", (uint32_t) &smbios_entry_ptr);
@@ -409,6 +418,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 		
 	}
 	
+	get_usb_max_version_str();
 	if (!startup) goto cmd_line;
 	
 	printf("USB: Initializing ...\n");
@@ -438,6 +448,9 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	}
 	
 	if (!BOOT_AQUA) {
+		printf("\n\n\t=== KERNEL COMMAND LINE ===\n");
+		printf_minor("\t\t%s (%d KB) of RAM available ...\n\n", ram_max_str, ram_max);
+		
 		char buffer[32];
 		int j;
 		
@@ -456,6 +469,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 			else if (strcmp(buffer, "mboot") == 0) parse_mboot(mb_magic, mb_address);
 			else if (strcmp(buffer, "cpu") == 0) goto detect_cpu;
 			else if (strcmp(buffer, "smbios") == 0) goto smbios;
+			else if (strcmp(buffer, "ram") == 0) printf("%s (%d KB)\n", ram_max_str, ram_max);
 			else if (strcmp(buffer, "ata") == 0) goto identify_ata;
 			else if (strcmp(buffer, "pci") == 0) goto detect_pci;
 			else if (strcmp(buffer, "usb") == 0) goto usb;
@@ -463,8 +477,8 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 			else if (strcmp(buffer, "poweroff") == 0) acpi_poweroff();
 			else if (strcmp(buffer, "reboot") == 0) power_reboot();
 			else if (strcmp(buffer, "aqua") == 0) break;
-			else if (strcmp(buffer, "help") == 0) printf_warn("bda\nint\nmboot\ncpu\nsmbios\nata\npci\nusb\n\npoweroff\nreboot\naqua\nhelp\nlog\n");
-			//~ else if (strcmp(buffer, "d0") == 0) j = 10 / 0;
+			else if (strcmp(buffer, "clear") == 0) vga_text_clear_screen();
+			else if (strcmp(buffer, "help") == 0) printf_warn("bda, int, mboot, cpu, smbios, ram, ata, pci, usb\npoweroff, reboot, aqua, help, log, clear\n");
 			
 			else printf_error("\"%s\" is unknown ... Type \"help\" for a list of commands.\n", buffer);
 			

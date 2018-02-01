@@ -30,10 +30,20 @@ power_reboot:
 	mov eax, 0xFE
 	out 0x64, eax
 	
+	.loop2:
+		in al, 0x64
+		test al, 0b00000010
+		jne .loop2
+	
+	mov eax, 0xFE
+	out 0x64, eax
+	
 	mov eax, 0x01
 	out 0x92, eax
 	
-	int 0x80
+	.loop3:
+		int 0x80
+		jmp .loop3
 	
 	.hang:
 		hlt

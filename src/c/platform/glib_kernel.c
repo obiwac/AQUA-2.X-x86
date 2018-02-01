@@ -149,18 +149,11 @@ void glib_update(void) {
 	mouse_x--;
 	mouse_y--;
 	
-	unsigned char wcpc = 3;
-	j = 0;
-	
 	int x = 0;
 	int y = 0;
 	
-	for (i = 0; i < glib_screen_surface->pitch * glib_screen_height; i += wcpc) {
-		glib_screen[i] = uc_pixels[j];
-		glib_screen[i + 1] = uc_pixels[j + 1];
-		glib_screen[i + 2] = uc_pixels[j + 2];
-		
-		j += wcpc;
+	for (i = 0; i < glib_screen_width * glib_screen_height; i++) {
+		((uint64_t*) glib_screen)[i] = ((uint64_t*) uc_pixels)[i];
 		
 	}
 	
