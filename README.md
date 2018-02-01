@@ -71,6 +71,7 @@ $ make bug
 $ make pci-database
 ```
 
+##### to download the latest PCI-ID and create a database.
 ##### If you want to flash AQUA to a USB drive, run
 
 ```bash
@@ -79,8 +80,6 @@ $ make flash
 
 ##### This will flash AQUA to `/dev/sdb`.
 ###### **WARNING**: This uses the `dd` command which can be very dangerous if used incorrectly. It is strongly ill-advised to run the above command.
-
-##### to download the latest PCI-ID and create a database.
 
 ## Minimum / recommended Virtual Box VM specs
 
