@@ -246,7 +246,7 @@ void basic_scan(char* buffer) {
 					break;
 				
 				} case 43: {
-					printf((char) 92);
+					printf("%c", (char) 92);
 					buffer[i++] = 'q';
 					
 					break;
