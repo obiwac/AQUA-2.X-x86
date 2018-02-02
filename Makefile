@@ -34,7 +34,8 @@ KERNEL := bin/kernel.bin
 KERNEL_SRC := $(shell find src/ -iname *.c -o -iname *.cpp -o -iname *.asm ! -iname kernel.asm)
 KERNEL_OBJ := $(addsuffix .o,$(KERNEL_SRC))
 
-EXTERNAL_OBJ := external_objects/game.o
+#external_objects/game.o
+EXTERNAL_OBJ := 
 
 prebuild:
 	@echo "Running Makefile ..."
