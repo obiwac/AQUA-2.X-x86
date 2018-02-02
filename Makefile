@@ -22,7 +22,7 @@ ifndef CPPC
 CPPC := g++ -m32
 endif
 
-CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs
+CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs -nostdlib
 CPPFLAGS := $(CFLAGS)
 ASFLAGS := -felf32
 LDFLAGS := -Tbuild/linker.ld -nostdlib -lgcc -g
@@ -33,6 +33,8 @@ KERNEL := bin/kernel.bin
 
 KERNEL_SRC := $(shell find src/ -iname *.c -o -iname *.cpp -o -iname *.asm ! -iname kernel.asm)
 KERNEL_OBJ := $(addsuffix .o,$(KERNEL_SRC))
+
+EXTERNAL_OBJ := external_objects/game.o
 
 prebuild:
 	@echo "Running Makefile ..."
@@ -68,7 +70,7 @@ $(KERNEL): $(KERNEL_OBJ)
 		wget "http://download819.mediafire.com/p6uft6o6b3pg/49hp2jcbv23aqbk/res.o" -O src/de/res.o; fi
 	
 	mkdir -p $(dir $@)
-	$(CC) $(LDFLAGS) -o $@ src/asm/kernel.asm.o $^ src/de/main.o src/de/res.o 2>&1 | tee logs/link.log
+	$(CC) $(LDFLAGS) -o $@ src/asm/kernel.asm.o $^ src/de/main.o src/de/res.o $(EXTERNAL_OBJ) 2>&1 | tee logs/link.log
 
 %.c.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<

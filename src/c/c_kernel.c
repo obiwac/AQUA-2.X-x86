@@ -79,19 +79,19 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	for (i = 0; i < 0xFFFFF; i++) { /// TODO read BDA keyboard buffer instead
 		if (inportb(0x64) & 1) {
 			switch (inportb(0x60)) {
-				case 49: {
+				case 49: { // N
 					printf_warn("Entering kernel shell instead of AQUA DE ...\n");
 					BOOT_AQUA = 0;
 					
 					break;
 					
-				} case 48: {
+				} case 48: { // B
 					printf_warn("Forcing serial output ...\n");
 					print_force_serial = 1;
 					
 					break;
 					
-				} case 47: {
+				} case 47: { // V
 					print_force_serial = 1;
 					printf_warn("Forcing ACPI to poweroff ...\n");
 					
@@ -101,13 +101,13 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 					acpi_poweroff();
 					break;
 					
-				} case 46: {
+				} case 46: { // C
 					printf_warn("Forcing serial output in the DE ...\n");
 					print_force_serial_de = 1;
 					
 					break;
 					
-				} case 18: {
+				} case 18: { // E
 					printf_warn("Booting without enabling IRQs ...\n");
 					no_irq = 1;
 					
