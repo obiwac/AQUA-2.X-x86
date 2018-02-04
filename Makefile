@@ -158,6 +158,9 @@ endif
 pci-database: prebuild
 	sh scripts/pci-database.sh 2>&1 | tee logs/pci-database.log
 
+driver-database: pci-database
+	sh scripts/driver-database.sh 2>&1 | tee logs/driver-database.log
+
 commit: prebuild
 	echo > src/c/pci/database/vendor_count.h
 	sh scripts/commit.sh 2>&1 | tee logs/commit.log
@@ -214,4 +217,4 @@ flash: all
 	$(call echo_colour, "WARNING This is a dangerous command. Only run this if you know what you are doing ...")
 	sh scripts/flash.sh 2>&1 logs/flash.log
 
-.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean kill-vm flash
+.PHONY: test clean main update download vm-setup cross-compiler pci-database commit all self bug auto ultra-clean kill-vm flash driver-database

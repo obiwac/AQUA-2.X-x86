@@ -182,7 +182,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	__asm__ __volatile__ ("sti");
 	
 	printf("PIT: Setting phase to 1000Hz ...\n");
-	//~ pit_phase(1000); /// TODO
+	pit_phase(1000);
 	
 	if (BOOT_AQUA) {
 		printf("Loading: Showing loading screen ...\n");
@@ -196,6 +196,9 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 		cpu_speed = CPU_SPEED_REFERENCE;
 		
 	}
+	
+	printf("PIT: Setting phase to 18.22Hz ...\n");
+	pit_phase(18.22);
 	
 	detect_ints_enabled:
 	

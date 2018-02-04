@@ -17,7 +17,7 @@ void pit_handler(register_t* regs) {
 	
 }
 
-void pit_phase(int hertz) {
+void pit_phase(float hertz) {
 	int divisor = 1193182 / hertz;
 	
 	outportb(0x43, 0x36);

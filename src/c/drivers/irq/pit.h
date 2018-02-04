@@ -15,6 +15,6 @@
 	
 	void pit_install(void);
 	void pit_handler(register_t* regs);
-	void pit_phase(int hertz);
+	void pit_phase(float hertz);
 	
 #endif
