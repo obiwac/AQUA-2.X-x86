@@ -63,14 +63,19 @@
 #include "loading/loading.h"
 #include "specs/cpu_speed.h"
 
+#include "buffer/temp.h"
+
 void main(void);
 char vga_log[1000];
 
 static uint8_t startup = 1;
 static uint8_t BOOT_AQUA = 1;
+static uint8_t boot_generic_external_binary = 0;
 
 static uint8_t print_force_serial_de = 0;
 static uint8_t no_irq = 0;
+
+void generic_external_bin(void);
 
 void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	printf("Awaiting kernel boot keypress ...\n");
@@ -110,6 +115,12 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 				} case 18: { // E
 					printf_warn("Booting without enabling IRQs ...\n");
 					no_irq = 1;
+					
+					break;
+					
+				} case 30: { // A
+					printf_warn("Booting into generic external binary ...\n");
+					boot_generic_external_binary = 1;
 					
 					break;
 					
@@ -191,6 +202,22 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 		cpu_speed = show_loading((uint32_t*) video_addr, video_width, video_height, video_cpc) * (uint32_t) (1000 / 18.22);
 		printf("Loading: Showed loading screen in %dms.\n", cpu_speed);
 		
+		printf("CPU Speed: Seeing how many frames can be rendered in one single second ...\n");
+		cmos_read_rtc();
+		
+		uint8_t start_second = cmos_second;
+		uint32_t frame_count = 0;
+		
+		while (start_second == cmos_second) {
+			cmos_read_rtc();
+			render_loading_frame((uint32_t*) video_addr, video_width, video_height, video_cpc);
+			frame_count++;
+			
+		}
+		
+		cpu_speed = frame_count;
+		printf_minor("\tManaged to render %d frames in a single second.\n", frame_count);
+		
 	} else {
 		printf("CPU Speed: Setting CPU speed to CPU_SPEED_REFERENCE (%dms)\n", CPU_SPEED_REFERENCE);
 		cpu_speed = CPU_SPEED_REFERENCE;
@@ -198,7 +225,7 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	}
 	
 	printf("PIT: Setting phase to 18.22Hz ...\n");
-	pit_phase(18.22);
+	pit_phase(18.22); /// FIXME
 	
 	detect_ints_enabled:
 	
@@ -495,9 +522,18 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 		
 	}
 	
-	printf("DE: Entering ...\n");
+	printf("Unloading screen ...\n");
 	unloading_screen();
-	main();
+	
+	if (boot_generic_external_binary) {
+		printf("Entering generic external binary ...\n");
+		generic_external_bin();
+		
+	} else {
+		printf("DE: Entering ...\n");
+		main();
+		
+	}
 	
 	printf("ACPI: Powering off system ...\n");
 	acpi_poweroff();

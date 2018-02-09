@@ -4,7 +4,7 @@
 	
 	#include "../types.h"
 	
-	uint32_t strlen(const char* string);
+	uint32_t kstrlen(const char* string);
 	//uint32_t strlen(const char* string);
 	
 #endif

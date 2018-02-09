@@ -3,9 +3,9 @@
 
 uint8_t streql(char* a, char* b) {
 	uint8_t result = 1;
-	uint8_t size = strlen(a);
+	uint8_t size = kstrlen(a);
 	
-	if (size != strlen(b)) {
+	if (size != kstrlen(b)) {
 		result = 0;
 		
 	} else {

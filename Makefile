@@ -34,12 +34,24 @@ KERNEL := bin/kernel.bin
 KERNEL_SRC := $(shell find src/ -iname *.c -o -iname *.cpp -o -iname *.asm ! -iname kernel.asm)
 KERNEL_OBJ := $(addsuffix .o,$(KERNEL_SRC))
 
-#external_objects/game.o
-EXTERNAL_OBJ := 
+HAS_EXTERNAL_OBJ := $(shell ls external_obj/*)
+
+ifdef HAS_EXTERNAL_OBJ
+EXTERNAL_OBJ := $(shell ls external_obj/*)
+else
+EXTERNAL_OBJ :=
+endif
 
 prebuild:
 	@echo "Running Makefile ..."
 	mkdir -p logs/
+	mkdir -p src/c/buffer/
+	
+ifdef HAS_EXTERNAL_OBJ
+	cp -f src/buffer/temp1.h src/c/buffer/temp.h
+else
+	cp -f src/buffer/temp0.h src/c/buffer/temp.h
+endif
 
 all: $(ISO)
 	@echo "Building $(ISO) ..."
@@ -104,7 +116,6 @@ kill-vm: prebuild
 	sleep 1
 
 test: kill-vm
-	-rm logs/serial.log
 	VBoxManage startvm "AQUA OS" 2>&1 | tee logs/virtualbox.log
 
 main: prebuild

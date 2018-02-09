@@ -11,7 +11,7 @@ static void print_char(char _char, colour_t colour) {
 
 void print_crude(char* string) {
 	int i;
-	for (i = 0; i < strlen(string); i++) {
+	for (i = 0; i < kstrlen(string); i++) {
 		print_char(string[i], TEXT_COLOUR);
 		
 	}

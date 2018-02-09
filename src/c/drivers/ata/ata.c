@@ -208,7 +208,7 @@ void ata_write28(ata_drive_t* drive, uint32_t sector, char* data, int count) {
 	}
 	
 	if (count < 0) {
-		count = strlen(data);
+		count = kstrlen(data);
 		
 	}
 	
@@ -315,7 +315,7 @@ void ata_write28_mul(ata_drive_t* drive, uint32_t sector, char* data) {
 	int buffer_count = 0;
 	
 	int i;
-	for (i = 0; i < strlen(data) + 1; i++) {
+	for (i = 0; i < kstrlen(data) + 1; i++) {
 		if (!(buffer_count % BYTES_PER_SECTOR) && buffer_count) {
 			ata_write28(drive, sector + i / BYTES_PER_SECTOR, buffer, buffer_count);
 			ata_flush(drive);

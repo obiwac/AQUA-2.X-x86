@@ -17,3 +17,4 @@ bin/
 cross_compiler/
 virtualbox/
 aqua/
+external_bins/
