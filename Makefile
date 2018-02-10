@@ -22,7 +22,7 @@ ifndef CPPC
 CPPC := g++ -m32
 endif
 
-CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs -nostdlib
+CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs -nostdlib -std=c11
 CPPFLAGS := $(CFLAGS)
 ASFLAGS := -felf32
 LDFLAGS := -Tbuild/linker.ld -nostdlib -lgcc -g
