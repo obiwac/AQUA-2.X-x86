@@ -65,6 +65,8 @@
 
 #include "buffer/temp.h"
 
+#include "acceleration/sse.h"
+
 void main(void);
 char vga_log[1000];
 
@@ -137,6 +139,18 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	
 	//~ vga_text_clear_screen();
 	parse_mboot(mb_magic, mb_address);
+	
+	printf("SSE2: Detecting SSE2 ...\n");
+	//~ uint8_t has_sse = detect_sse();
+	
+	//~ if (has_sse) {
+		//~ printf_minor("\tHas SSE2. Setting it up ...\n");
+		//~ setup_sse();
+		
+	//~ } else {
+		//~ printf_warn("\tDoes not have SSE2 ...\n");
+		
+	//~ }
 	
 	printf("GDT: Loading the gdt ...\n");
 	load_gdt();

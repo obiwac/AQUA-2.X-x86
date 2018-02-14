@@ -30,6 +30,7 @@
 	uint8_t ehci_controller_count;
 	uint8_t xhci_controller_count;
 	
+	char usb_max_spec;
 	unsigned char usb_calculate_max_spec(void);
 	
 #endif

@@ -39,6 +39,9 @@ section .text
 	extern c_main
 	extern acpi_poweroff
 	
+	extern enable_sse
+	extern enable_fpu
+	
 	global start
 	start:
 		lea ecx, [start_hh]

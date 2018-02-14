@@ -1,7 +1,7 @@
 
 #include "usb.h"
 
-static char usb_max_spec = USB_VERSION_NONE;
+char usb_max_spec = USB_VERSION_NONE;
 
 unsigned char usb_calculate_max_spec(void) {
 	if (!xhci_controller[0].unknown) usb_max_spec = USB_VERSION_3_0;

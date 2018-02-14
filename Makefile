@@ -22,10 +22,10 @@ ifndef CPPC
 CPPC := g++ -m32
 endif
 
-CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs -nostdlib -std=c11
+CFLAGS := -ffreestanding -g -Wfatal-errors -Wno-trigraphs -nostdlib -std=gnu11
 CPPFLAGS := $(CFLAGS)
 ASFLAGS := -felf32
-LDFLAGS := -Tbuild/linker.ld -nostdlib -lgcc -g
+LDFLAGS := -Tbuild/linker.ld -nostdlib -g
 EMUFLAGS := -net none -serial stdio
 
 ISO := bin/aqua.iso
@@ -42,16 +42,16 @@ else
 EXTERNAL_OBJ :=
 endif
 
+ifdef HAS_EXTERNAL_OBJ
+$(shell cp -f src/buffer/temp1.h src/c/buffer/temp.h)
+else
+$(shell cp -f src/buffer/temp0.h src/c/buffer/temp.h)
+endif
+
 prebuild:
 	@echo "Running Makefile ..."
 	mkdir -p logs/
 	mkdir -p src/c/buffer/
-	
-ifdef HAS_EXTERNAL_OBJ
-	cp -f src/buffer/temp1.h src/c/buffer/temp.h
-else
-	cp -f src/buffer/temp0.h src/c/buffer/temp.h
-endif
 
 all: $(ISO)
 	@echo "Building $(ISO) ..."

@@ -65,9 +65,14 @@ unsigned char time_day(void) {
 	
 }
 
+unsigned char time_month(void) {
+	return cmos_month < 1 ? 0 : cmos_month - 1;
+	
+}
+
 char* time_month_name(void) {
 	update_time();
-	return (char*) month_names[cmos_month < 1 ? 0 : cmos_month - 1];
+	return (char*) month_names[time_month()];
 	
 }
 

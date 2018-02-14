@@ -164,10 +164,12 @@ void glib_update(void) {
 	int x = 0;
 	int y = 0;
 	
-	for (i = 0; i < glib_screen_width * glib_screen_height; i++) {
+	for (i = 0; i < glib_screen_width * glib_screen_height / 2; i++) {
 		((uint64_t*) glib_screen)[i] = ((uint64_t*) uc_pixels)[i];
 		
 	}
+	
+	//~ sse_memcpy(glib_screen, uc_pixels, glib_screen_width * glib_screen_height * 4); /// TODO
 	
 	l = 0;
 	for (i = 0; i < MOUSE_CURSOR_LENGTH / 4; i++) {
