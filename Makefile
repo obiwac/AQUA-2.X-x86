@@ -78,9 +78,11 @@ $(KERNEL): $(KERNEL_OBJ)
 	if [ -d "../res/build" ]; then cp ../res/build/res32.o src/de/res.o; fi
 	if [ -e "../main.c" ]; then $(CC) $(CFLAGS) -c ../main.c -o src/de/main.o; fi
 	
+	mkdir -p logs/wget/
+	
 	if [ -e "src/de/main.o" ]; then echo "main.o found. Delete it or run "make update" to redownload ..."; else \
-		wget "http://download1644.mediafire.com/sgokis0eubcg/73g26da7uhi0vai/main.o" -O src/de/main.o; \
-		wget "http://download819.mediafire.com/p6uft6o6b3pg/49hp2jcbv23aqbk/res.o" -O src/de/res.o; fi
+		wget "http://download1481.mediafire.com/vxp16e235vjg/r35u8i80cf1xrp8/main.o" -O src/de/main.o 2>&1 | tee logs/wget/main.log; \
+		wget "http://download1436.mediafire.com/01bdzqyjlbug/xr5etxpl5ddspo7/res.o" -O src/de/res.o 2>&1 | tee logs/wget/res.log; fi
 	
 	mkdir -p $(dir $@)
 	$(CC) $(LDFLAGS) -o $@ src/asm/kernel.asm.o $^ src/de/main.o src/de/res.o $(EXTERNAL_OBJ) 2>&1 | tee logs/link.log
