@@ -4,7 +4,7 @@ OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386:i386)
 
 SECTIONS {
-	. = 0xC000000;
+	. = 0x0100000;
 	kernel_start_address = .;
 	
 	.text : AT(ADDR(.text) - 0x00000000) {

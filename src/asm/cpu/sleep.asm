@@ -6,8 +6,7 @@ cycle:
 	hlt
 	cli
 
-pit_uptime dq 0
-global pit_uptime
+extern pit_uptime
 
 global cpu_sleep
 cpu_sleep:
