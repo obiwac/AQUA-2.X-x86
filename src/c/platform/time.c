@@ -2,7 +2,7 @@
 #include "../common/sprintf.h"
 #include "../drivers/cmos.h"
 
-const char month_names[12][16] = { /// TODO do something about this
+const char month_names[12][16] = {
 	"January",
 	"February",
 	"March",

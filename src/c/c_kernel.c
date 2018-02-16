@@ -80,58 +80,53 @@ static uint8_t no_irq = 0;
 void generic_external_bin(void);
 
 void c_main(uint32_t mb_magic, uint32_t mb_address) {
-	printf("Awaiting kernel boot keypress ...\n");
-	
 	int i;
-	for (i = 0; i < 0xFFFFF; i++) { /// TODO read BDA keyboard buffer instead
-		if (inportb(0x64) & 1) {
-			switch (inportb(0x60)) {
-				case 49: { // N
-					printf_warn("Entering kernel shell instead of AQUA DE ...\n");
-					BOOT_AQUA = 0;
-					
-					break;
-					
-				} case 48: { // B
-					printf_warn("Forcing serial output ...\n");
-					print_force_serial = 1;
-					
-					break;
-					
-				} case 47: { // V
-					print_force_serial = 1;
-					printf_warn("Forcing ACPI to poweroff ...\n");
-					
-					printf("ACPI: Initializing ... \n");
-					printf_minor("\tACPI: %d\n", acpi_init());
-					
-					acpi_poweroff();
-					break;
-					
-				} case 46: { // C
-					printf_warn("Forcing serial output in the DE ...\n");
-					print_force_serial_de = 1;
-					
-					break;
-					
-				} case 18: { // E
-					printf_warn("Booting without enabling IRQs ...\n");
-					no_irq = 1;
-					
-					break;
-					
-				} case 30: { // A
-					printf_warn("Booting into generic external binary ...\n");
-					boot_generic_external_binary = 1;
-					
-					break;
-					
-				} default: {
-					break;
-					
-				}
-				
-			}
+	
+	printf("BDA: Scanning BDA keyboard buffer for boot keys ...\n");
+	
+	switch (bda_get_keyboard_buffer()[0]) {
+		case 'n': {
+			printf_warn("Entering kernel shell instead of AQUA DE ...\n");
+			BOOT_AQUA = 0;
+			
+			break;
+			
+		} case 'b': {
+			printf_warn("Forcing serial output ...\n");
+			print_force_serial = 1;
+			
+			break;
+			
+		} case 'v': {
+			print_force_serial = 1;
+			printf_warn("Forcing ACPI to poweroff ...\n");
+			
+			printf("ACPI: Initializing ... \n");
+			printf_minor("\tACPI: %d\n", acpi_init());
+			
+			acpi_poweroff();
+			break;
+			
+		} case 'c': {
+			printf_warn("Forcing serial output in the DE ...\n");
+			print_force_serial_de = 1;
+			
+			break;
+			
+		} case 'e': {
+			printf_warn("Booting without enabling IRQs ...\n");
+			no_irq = 1;
+			
+			break;
+			
+		} case 'a': {
+			printf_warn("Booting into generic external binary ...\n");
+			boot_generic_external_binary = 1;
+			
+			break;
+			
+		} default: {
+			break;
 			
 		}
 		
