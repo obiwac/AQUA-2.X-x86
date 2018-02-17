@@ -21,8 +21,22 @@ const char month_names[12][16] = {
 char clock_digital[6];
 char clock_date_words[32];
 
+static void update_time(void);
+
 void time_wait_ms(int ms) {
-	/// TODO
+	update_time();
+	
+	unsigned char old = cmos_second;
+	unsigned char seconds = ms / 1000;
+	
+	while (seconds--) {
+		while (old == cmos_second) {
+			glib_update();
+			update_time();
+			
+		}
+		
+	}
 	
 }
 

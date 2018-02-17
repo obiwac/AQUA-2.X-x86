@@ -81,7 +81,6 @@ void generic_external_bin(void);
 
 void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	int i;
-	
 	printf("BDA: Scanning BDA keyboard buffer for boot keys ...\n");
 	
 	switch (bda_get_keyboard_buffer()[0]) {
