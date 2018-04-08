@@ -67,4 +67,15 @@
 	void ata_read28_mul(char* data, ata_drive_t* drive, uint32_t sector);
 	void ata_write28_mul(ata_drive_t* drive, uint32_t sector, char* data);
 	
+	char* ata_read48(ata_drive_t* drive, uint32_t sector, int count);
+	void ata_write48(ata_drive_t* drive, uint32_t sector, char* data, int count);
+	
+	void ata_flush_ext(ata_drive_t* drive);
+	
+	void ata_read48_mul(char* data, ata_drive_t* drive, uint32_t sector);
+	void ata_write48_mul(ata_drive_t* drive, uint32_t sector, char* data);
+	
+	void ata_write(ata_drive_t* drive, uint32_t sector, char* data, int count);
+	char* ata_read(ata_drive_t* drive, uint32_t sector, int count);
+	
 #endif

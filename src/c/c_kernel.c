@@ -338,11 +338,32 @@ void c_main(uint32_t mb_magic, uint32_t mb_address) {
 	if (ata_current_drive_set) {
 		printf("ATA: The selected drive is %s %s.\n", ata_current_drive->name, ata_current_drive->master_name);
 		
+		/*printf("ATA: Testing drive (writing \"Lord of Rings\" in dummy sector [0]) ...\n");
+		ata_write(ata_current_drive, 0, "Lord of Rings", 14);
+		
+		printf_minor("\tATA: Reading back from the dummy sector [0] ...\n");
+		char* read = ata_read(ata_current_drive, 0, 14);
+		
+		printf_minor("\t\t%s\n", read);
+		
+		if (strcmp(read, "Lord of the Rings") == 0) {
+			printf("\tATA: Received the correct string, allowed drive to be used ...\n");
+			
+		} else {
+			printf_warn("\tATA: Did not receive the correct string. Disabling the drive ...\n");
+			
+			ata_current_drive_set = 0;
+			ata_current_drive = (ata_drive_t*) 0;
+			
+		}*/
+		
 	} else {
 		printf_warn("ATA: No useable drive was found, so no drives were selected ...\n");
 		
 	}
 	
+	//~ while (1);
+		
 	if (!startup) goto cmd_line;
 	
 	printf("CMOS: Initializing ...\n");

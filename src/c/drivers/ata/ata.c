@@ -1,4 +1,6 @@
 
+/// Thank Jesus (StartForKillerMC) :3
+
 #include "ata.h"
 
 ata_drive_t _drive_primary_master;
@@ -330,5 +332,216 @@ void ata_write28_mul(ata_drive_t* drive, uint32_t sector, char* data) {
 	
 	ata_write28(drive, sector + i / BYTES_PER_SECTOR, buffer, buffer_count);
 	ata_flush(drive);
+	
+}
+
+char* ata_read48(ata_drive_t* drive, uint32_t sector, int count) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
+	uint8_t auto_count = count < 0;
+	int data_size = auto_count ? BYTES_PER_SECTOR + 1 : count + 1;
+	char* data = (char*) kmalloc(data_size);
+	
+	if (auto_count) {
+		count = BYTES_PER_SECTOR;
+		
+	}
+	
+	if (sector & 0xF0000000) {
+		printf_warn("ATA The first four bytes you are reading are not zeros.\n");
+		
+	} else {
+		if (count > BYTES_PER_SECTOR) {
+			printf_warn("ATA You are trying to read more data than a sector can hold (512 bytes).\n");
+			
+		} else {
+			outportb(drive->device_port, (drive->master ? 0x40 : 0x50));
+			
+			outportb(drive->sector_count_port, 0);
+			outportb(drive->lba_low_port, (sector & 0xFF000000) >> 24);
+			outportb(drive->lba_mid_port, (sector & 0xFF00000000) >> 32);
+			outportb(drive->lba_hi_port, (sector & 0xFF00000000000) >> 40);
+			
+			outportb(drive->sector_count_port, 1);
+			outportb(drive->lba_low_port, sector & 0xFF);
+			outportb(drive->lba_mid_port, (sector & 0xFF00) >> 8);
+			outportb(drive->lba_hi_port, (sector & 0xFF0000) >> 16);
+			
+			outportb(drive->command_port, 0x24);
+			
+			uint8_t status = inportb(drive->command_port);
+			
+			while (((status & 0x80) == 0x80) && ((status & 0x01) != 0x01)) {
+				status = inportb(drive->command_port);
+				
+			}
+			
+			if (status & 0x01) {
+				printf_warn("ATA Could not detect the device's identity.\n", 0x06);
+				
+			} else {
+				int16_t i;
+				for (i = 0; i < count; i++) {
+					uint16_t wdata = inportw(drive->data_port);
+					
+					int c = i * 2;
+					data[c] = wdata & 0xFF;
+					data[c + 1] = (wdata >> 8) & 0xFF;
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	return data;
+	
+}
+
+void ata_write48(ata_drive_t* drive, uint32_t sector, char* data, int count) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
+	if (count < 0) {
+		count = kstrlen(data);
+		
+	}
+	
+	if (sector & 0xF0000000) {
+		printf_warn("ATA The first four bytes you are writing are not zeros.\n");
+		
+	} else {
+		if (count > BYTES_PER_SECTOR) {
+			printf_warn("ATA You are trying to write more data than a sector can hold (512 bytes).\n");
+			
+		} else {
+			outportb(drive->device_port, (drive->master ? 0x40 : 0x50));
+			
+			outportb(drive->sector_count_port, 0);
+			outportb(drive->lba_low_port, (sector & 0xFF000000) >> 24);
+			outportb(drive->lba_mid_port, (sector & 0xFF00000000) >> 32);
+			outportb(drive->lba_hi_port, (sector & 0xFF00000000000) >> 40);
+			
+			outportb(drive->sector_count_port, 1);
+			outportb(drive->lba_low_port, sector & 0xFF);
+			outportb(drive->lba_mid_port, (sector & 0xFF00) >> 8);
+			outportb(drive->lba_hi_port, (sector & 0xFF0000) >> 16);
+			
+			outportb(drive->command_port, 0x34);
+			
+			uint16_t i;
+			for (i = 0; i < BYTES_PER_SECTOR /*count*/; i++) {
+				int c = i * 2;
+				uint16_t wdata = (data[c + 1] << 8) | data[c];
+				
+				outportw(drive->data_port, wdata);
+				
+			}
+			
+			ata_flush_ext(drive);
+			
+		}
+		
+	}
+	
+}
+
+void ata_flush_ext(ata_drive_t* drive) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
+	outportb(drive->device_port, drive->master ? 0x40 : 0x50);
+	outportb(drive->command_port, 0xEA);
+	
+	uint8_t status = inportb(drive->command_port);
+	
+	while (((status & 0x80) == 0x80) && ((status & 0x01) != 0x01)) {
+		status = inportb(drive->command_port);
+		
+	}
+	
+	if (status & 1) {
+		printf_warn("ATA Could not detect the device's identity.\n");
+		
+	}
+	
+}
+
+void ata_read48_mul(char* result, ata_drive_t* drive, uint32_t sector) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
+	char* buffer;
+	int i = 0;
+	
+	uint8_t reading = 1;
+	while (reading) {
+		buffer = ata_read48(drive, sector + i, BYTES_PER_SECTOR);
+		buffer[3] = '\0';
+		printf("\t%s\n", buffer);
+		
+		int j;
+		for (j = i * BYTES_PER_SECTOR; j < i * BYTES_PER_SECTOR + BYTES_PER_SECTOR; j++) {
+			result[j] = buffer[j % BYTES_PER_SECTOR];
+			reading = !(result[j] == '\0');
+			
+		}
+		
+		i++;
+		kfree(buffer, BYTES_PER_SECTOR);
+		
+	}
+	
+	printf(result);
+	
+}
+
+void ata_write48_mul(ata_drive_t* drive, uint32_t sector, char* data) {
+	if (drive == (ata_drive_t*) 0) {
+		drive = ata_current_drive;
+		
+	}
+	
+	char buffer[BYTES_PER_SECTOR];
+	int buffer_count = 0;
+	
+	int i;
+	for (i = 0; i < kstrlen(data) + 1; i++) {
+		if (!(buffer_count % BYTES_PER_SECTOR) && buffer_count) {
+			ata_write48(drive, sector + i / BYTES_PER_SECTOR, buffer, buffer_count);
+			ata_flush(drive);
+			buffer_count = 0;
+			
+		} else {
+			buffer[buffer_count++] = data[i];
+			
+		}
+		
+	}
+	
+	ata_write48(drive, sector + i / BYTES_PER_SECTOR, buffer, buffer_count);
+	ata_flush(drive);
+	
+}
+
+void ata_write(ata_drive_t* drive, uint32_t sector, char* data, int count) {
+	ata_write48(drive, sector, data, count);
+	ata_write48(drive, sector, data, count);
+	
+}
+
+char* ata_read(ata_drive_t* drive, uint32_t sector, int count) {
+	return ata_read48(drive, sector, count);
 	
 }
